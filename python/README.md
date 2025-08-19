@@ -15,7 +15,7 @@
 
 ### Dependencies
 
-- Python >= 3.12
+- Python >= 3.13
   <!-- - [uv](https://docs.astral.sh/uv) -->
   <!-- - [pixi](https://pixi.sh) -->
 
