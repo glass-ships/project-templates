@@ -1,0 +1,28 @@
+{
+  "recommendations": [
+    /** General */
+    "monokai.theme-monokai-pro-vscode", // Monokai Pro theme
+    "Tyriar.sort-lines", // sort lines
+    "esbenp.prettier-vscode", // prettier
+    "aaron-bond.better-comments", // colorize comments
+    "pflannery.vscode-versionlens", // check for dep updates in package.json, pyproject.toml, etc.
+    "streetsid-esoftware.code-spell-checker",
+    /** Python */
+    "njpwerner.autodocstring", // auto-generate docstrings
+    "tamasfe.even-better-toml", // TOML syntax highlighting
+    "charliermarsh.ruff", // Linting and formatting for Python
+    /** Web Development */
+    // Linting
+    "yoavbls.pretty-ts-errors",
+    "dbaeumer.vscode-eslint",
+    // Testing
+    "ms-playwright.playwright",
+    "astro-build.astro-vscode", // for Astro projects
+    "Vue.volar", // for Vue projects
+    /** Misc */
+    "janisdd.vscode-edit-csv", // CSV visualizer/editor
+    "bmalehorn.vscode-fish", // Fish shell support
+    "foxundermoon.shell-format", // Shell script formatter
+    "rust-lang.rust-analyzer" // Rust language server
+  ]
+}

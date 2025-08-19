@@ -1,0 +1,88 @@
+site_name: ""
+repo_name: ""
+repo_url: "https://gitlab.com/glass-ships/"
+
+# nav:
+#   - Home:
+#     - Welcome: 'index.md'
+#     - API Reference: 'API-Reference/index.md'
+
+theme:
+  name: "material"
+  docs_dir: docs/
+  logo: ""
+  favicon: ""
+  features:
+    - navigation.expand
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-2
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+  font:
+    # text: 'Rajdhani'
+    text: "Source Sans Pro"
+    code: "Source Sans Pro Mono"
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src/python_project]
+          import:
+            - https://docs.python.org/3/objects.inv
+            - https://mkdocstrings.github.io/objects.inv
+            - https://mkdocstrings.github.io/griffe/objects.inv
+          options:
+            # See: https://mkdocstrings.github.io/usage/handlers/?h=docstring_style#selection-options
+            docstring_style: google
+            docstring_options:
+              docstring_section_style: table
+              ignore_init_summary: yes
+            merge_init_into_class: yes
+            # separate_signature: yes
+            show_signature: no
+            show_source: no
+            show_root_full_path: no
+            show_root_toc_entry: False
+            filters:
+              - "!^_[^_]"
+              # - '^_[^_]'
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - attr_list
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra:
+  social:
+    - icon: "fontawesome/solid/house"
+      link: "https://glass-ships.com"
+    - icon: "fontawesome/brands/github-alt"
+      link: "https://gitlab.com/glass-ships/"
+
+copyright: "Copyright &copy; 2020 - 2023 [Glass](glass-ships.com)"

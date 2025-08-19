@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    /** General */
+    "AykutSarac.jsoncrack-vscode", // JSON Graph View
+    "Tyriar.sort-lines", // sort lines
+    "esbenp.prettier-vscode", // prettier
+    "aaron-bond.better-comments", // colorize comments
+    "pflannery.vscode-versionlens", // check for dep updates in package.json, pyproject.toml, etc.
+    "streetsid-esoftware.code-spell-checker",
+    /** Python */
+    "njpwerner.autodocstring", // auto-generate docstrings
+    "tamasfe.even-better-toml", // TOML syntax highlighting
+    "charliermarsh.ruff", // Linting and formatting for Python
+  ]
+}
