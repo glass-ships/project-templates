@@ -9,7 +9,6 @@ export type ButtonColors = "primary" | "secondary" | "tertiary" | "none";
 export type ButtonDesigns = "normal" | "circle" | "small";
 export type ButtonType = "button" | "link" | "submit";
 export interface AppButtonProps {
-  // classes?: string;
   color?: ButtonColors;
   design?: ButtonDesigns;
   icon?: string;
@@ -23,7 +22,6 @@ export interface AppButtonProps {
 
 // AppButton component
 export default function AppButton({
-  // classes = "",
   color = "primary",
   design = "normal",
   icon = "",

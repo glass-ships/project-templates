@@ -1,3 +1,8 @@
+/**
+ * A smaller selection of the full tailwind color set.
+ * Chooses 400, 500, and 600 from each color
+ * as light, mid, and dark respectively
+ */
 const colors = {
   slate: "#64748b",
   red: {
