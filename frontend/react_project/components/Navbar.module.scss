@@ -1,4 +1,4 @@
-@import "../global/variables";
+@use "../global/variables" as v;
 
 .navbar {
   position: sticky;
@@ -17,11 +17,11 @@
   // background: linear-gradient(rgb(0, 0, 0, 0.1) 0%, rgb(0, 0, 0, 0.5) 50%, rgb(0, 0, 0, 0.3) 100%);
   // background: -webkit-linear-gradient(bottom, rgb(0, 0, 0, 0.1) 0%, rgb(0, 0, 0, 0.5) 50%, rgb(0, 0, 0, 0.3) 100%);
   // background: -moz-linear-gradient(bottom, rgb(0, 0, 0, 0.1) 0%, rgb(0, 0, 0, 0.5) 50%, rgb(0, 0, 0, 0.3) 100%);
-  background: $off-black;
+  background: v.$black;
 
   .logo {
-    width: 50px;
-    height: 50px;
+    width: 75px;
+    height: 75px;
     transition-property: transform;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
@@ -34,153 +34,71 @@
     display: flex;
     align-items: center;
     gap: 2rem;
-    font-weight: $normal;
-    // font-size: $large;
-    color: $gray;
+    font-weight: v.$normal;
+    // font-size: v.$large;
+    color: v.$grey;
     text-decoration: none;
   }
   a:hover {
-    color: $tertiary;
+    color: v.$tertiary;
   }
 }
 
-
-
-.label {
-  width: 250px;
-  padding-left: 1rem;
-  padding-bottom: 0.5rem;
+/** DROPDOWN MENU */
+.dropdownbutton {
+  background: none;
+  border-radius: 5px;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+  transition:
+    color v.$fast,
+    background v.$fast,
+    opacity v.$fast,
+    box-shadow v.$fast;
+  &:hover {
+    background: linear-gradient(#3b82f6, #8b5cf6);
+  }
 }
 
-.combobox {
-  // height: 2.5rem;
-  // width: 100%;
-  min-width: 250px;
-  max-height: 38px;
-  // max-width: 33%;
-  // border-radius: 0.375rem;
-  // border-style: none;
-  // background-color: white;
-  // padding-left: 1rem;
-  // padding-right: 1rem;
-  font-size: 1rem;
-  // line-height: 1.5rem;
-  color: black;
-  // outline-width: 1px;
-  // outline-offset: -1px;
-  // outline-color: hsl(204 100% 40%);
-  box-shadow:
-    inset 0 0 0 1px rgba(0 0 0/0.15),
-    inset 0 2px 5px 0 rgba(0 0 0/0.08);
+.menu {
+  max-height: inherit;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 2px;
+  min-width: 100px;
+  box-sizing: border-box;
+  outline: none;
+  background-color: v.$desaturated2;
+  border-radius: 6px;
 }
 
-.combobox::placeholder {
-  color: rgb(0 0 0 / 0.6);
-}
-
-.combobox:hover {
-  background-color: hsl(204 20% 99%);
-}
-
-.combobox[data-focus-visible] {
-  outline-style: solid;
-}
-
-.combobox[data-active-item] {
-  outline-width: 2px;
-}
-
-.combobox:where(.dark, .dark *) {
-  background-color: hsl(204 4% 8%);
-  color: white;
-  box-shadow:
-    inset 0 0 0 1px rgba(255 255 255/0.15),
-    inset 0 -1px 0 0 rgba(255 255 255/0.05),
-    inset 0 2px 5px 0 rgba(0 0 0/0.15);
-}
-
-.combobox:where(.dark, .dark *)::placeholder {
-  color: rgb(255 255 255 / 46%);
-}
-
-.combobox:hover:where(.dark, .dark *) {
-  background-color: hsl(204 4% 6%);
+.menuitem {
+  cursor: default;
+  margin: 2px;
+  padding: 0.286rem 0.571rem;
+  position: relative;
+  display: grid;
+  grid-template-areas:
+    "label kbd"
+    "desc  kbd";
+  align-items: center;
+  column-gap: 20px;
+  border-radius: 6px;
+  outline: none;
+  forced-color-adjust: none;
+  color: v.$white;
+  font-size: 1.072rem;
+  font-weight: v.$normal;
+  &[data-focused] {
+    background: v.$primary-light;
+    color: v.$black;
+  }
 }
 
 .popover {
-  position: relative;
-  z-index: 50;
-  display: flex;
-  max-height: min(var(--popover-available-height, 300px), 300px);
-  flex-direction: column;
+  padding: 0.25rem;
+  width: 14rem;
   overflow: auto;
-  overscroll-behavior: contain;
-  border-radius: 0.5rem;
-  border-width: 1px;
-  border-style: solid;
-  border-color: hsl(204 20% 88%);
-  background-color: white;
-  padding: 0.5rem;
-  color: black;
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  box-shadow:
-    0 10px 15px -3px rgb(0 0 0 / 0.1),
-    0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-.popover:where(.dark, .dark *) {
-  border-color: hsl(204 4% 24%);
-  background-color: hsl(204 4% 16%);
-  color: white;
-  box-shadow:
-    0 10px 15px -3px rgb(0 0 0 / 0.25),
-    0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-.combobox-item {
-  display: flex;
-  cursor: default;
-  scroll-margin: 0.5rem;
-  align-items: center;
-  gap: 0.5rem;
-  border-radius: 0.25rem;
-  padding: 0.5rem;
-  outline: none !important;
-  opacity: var(--item-opacity, 1);
-  transition-property: opacity;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-.combobox-item:hover {
-  background-color: hsl(204 100% 80% / 0.4);
-}
-
-.combobox-item[data-active-item] {
-  background-color: hsl(204 100% 40%);
-  color: white;
-}
-
-.combobox-item:active,
-.combobox-item[data-active] {
-  padding-top: 9px;
-  padding-bottom: 7px;
-}
-
-.combobox-item:hover:where(.dark, .dark *) {
-  background-color: hsl(204 100% 40% / 0.25);
-}
-
-.combobox-item:where(.dark, .dark *)[data-active-item] {
-  background-color: hsl(204 100% 40%);
-}
-
-.no-results {
-  gap: 0.5rem;
-  padding: 0.5rem;
-}
-
-.popover[aria-busy="true"] {
-  --item-opacity: 0.5;
+  box-shadow: v.$shadow;
 }
