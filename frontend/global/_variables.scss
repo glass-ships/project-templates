@@ -1,7 +1,6 @@
 // @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 // @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
-
 /** Fonts */
 // $sans: "Inter";
 // $sans: "Roboto";
@@ -27,6 +26,7 @@ $bold: 500;
 $spacing: 1.5;
 
 /** Color palette */
+// theme colors
 $primary: #3730a3;
 $primary-mid: #6366f1;
 $primary-light: #a5b4fc;
@@ -36,14 +36,20 @@ $secondary-light: #2dd4bf;
 $tertiary: #facc15;
 $tertiary-mid: #fde047;
 $tertiary-light: #fef08a;
-$highlight-bg: #3730a3;
-$off-white: #fafafa;
-$light-grey: #d0d0e0;
-$grey: #a0a0b0;
-$dark-grey: #404050;
-$off-black: #101020;
 $desaturated1: #8d9db3;
 $desaturated2: #474e80;
+// neutrals
+$white: #ffffff;
+$off-white: #fafafa;
+$light-grey: #eeeeee;
+$grey: #a0a0a0;
+$dark-grey: #808080;
+$off-black: #404040;
+$black: #000000;
+// specific
+$success: $primary-mid;
+$error: #fe3e5e;
+$highlight-bg: #3730a3;
 
 /** Width of main content column on page */
 $section: 900px;

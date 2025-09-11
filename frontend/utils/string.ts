@@ -1,4 +1,4 @@
-import { snackbar } from "@/components/TheSnackbar.vue";
+// import { snackbar } from "@/components/TheSnackbar.vue";
 
 /** collapse whitespace in string */
 export const collapse = (value = ""): string =>
@@ -28,9 +28,9 @@ export const copyToClipboard = async (
 ) => {
   try {
     await window.navigator.clipboard.writeText(value);
-    snackbar(message);
+    // snackbar(message);
   } catch (error) {
-    snackbar(`Error copying to clipboard. See dev console for more info.`);
+    // snackbar(`Error copying to clipboard. See dev console for more info.`);
     console.error(error);
   }
 };
