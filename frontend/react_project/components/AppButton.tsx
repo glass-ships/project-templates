@@ -19,6 +19,7 @@ export interface AppButtonProps {
   iconColor?: string;
   iconPosition?: "left" | "right";
   linkTo?: string;
+  newTab?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement> | null) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLButtonElement>) => void;
 }
@@ -32,10 +33,11 @@ export default function AppButton({
   icon = "",
   iconPosition = "right",
   linkTo = "",
+  newTab = false,
   onClick = undefined,
   onKeyDown = undefined,
 }: AppButtonProps) {
-  const iconColor = color === "none" ? "#facc15" : "white";
+  const iconColor = color === "none" ? "#facc15" : "black";
   const buttonClass = `${styles.button} ${styles[color]} ${styles[design]} ${text ? styles.text : ""}`;
   const iconArgs: AppIconProps = {
     icon,
@@ -44,7 +46,7 @@ export default function AppButton({
   };
   if (type === "link" || linkTo !== "") {
     return (
-      <a id={id} href={linkTo} target="_blank" className={buttonClass}>
+      <a id={id} href={linkTo} target={newTab ? "_blank" : "_self"} className={buttonClass}>
         {icon && iconPosition === "left" && <AppIcon {...iconArgs} />}
         {text && text}
         {icon && iconPosition === "right" && <AppIcon {...iconArgs} />}
