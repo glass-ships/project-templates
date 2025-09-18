@@ -31,17 +31,18 @@ export default function AppButton({
   type = "button",
   text = "",
   icon = "",
+  iconColor,
   iconPosition = "right",
   linkTo = "",
   newTab = false,
   onClick = undefined,
   onKeyDown = undefined,
 }: AppButtonProps) {
-  const iconColor = color === "none" ? "#facc15" : "black";
+  const defaultIconColor = color === "none" ? "#facc15" : "black";
   const buttonClass = `${styles.button} ${styles[color]} ${styles[design]} ${text ? styles.text : ""}`;
   const iconArgs: AppIconProps = {
     icon,
-    color: iconColor,
+    color: iconColor || defaultIconColor,
     size: text ? "tiny" : "small",
   };
   if (type === "link" || linkTo !== "") {
