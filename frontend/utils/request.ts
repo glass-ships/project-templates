@@ -59,9 +59,9 @@ export const request = async <Response>(
   paramsObject.sort();
 
   /** assemble url to query */
-  const url = api + prefix + path;
+  let url = api + prefix + path;
   const paramsString = "?" + paramsObject.toString();
-  if (paramsString !== "?") url.concat("/" + paramsString);
+  if (paramsString !== "?") url = url + paramsString;
 
   if (newTab) window.open(url);
 
