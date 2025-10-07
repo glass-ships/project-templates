@@ -1,0 +1,51 @@
+{
+  "name": "project-name",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test:lint": "eslint src",
+    "lint": "eslint src --fix"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "*",
+    "@fortawesome/free-brands-svg-icons": "*",
+    "@fortawesome/free-regular-svg-icons": "*",
+    "@fortawesome/free-solid-svg-icons": "*",
+    "@fortawesome/react-fontawesome": "*",
+    "@tanstack/react-query": "*",
+    "match-sorter": "*",
+    "normalize.css": "*",
+    "react": "^*",
+    "react-dom": "^*",
+    "react-router-dom": "*",
+    "react-aria-components": "*",
+    "react-select": "*",
+    "react-toastify": "^*",
+    "sass": "*",
+    "sass-loader": "*"
+  },
+  "devDependencies": {
+    "@eslint/js": "*",
+    "@types/node": "*",
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "@vitejs/plugin-react": "*",
+    "eslint": "*",
+    "eslint-config-prettier": "*",
+    "eslint-plugin-prettier": "*",
+    "eslint-plugin-react-hooks": "*",
+    "eslint-plugin-react-refresh": "*",
+    "globals": "*",
+    "typescript": "*",
+    "typescript-eslint": "*",
+    "vite": "*",
+    "vite-plugin-svgr": "^4.5.0"
+  },
+  "_notes_": {
+    "dependencies": "Use `bunx depcheck` to check for unused or missing dependencies"
+  }
+}

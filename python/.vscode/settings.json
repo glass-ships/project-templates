@@ -1,7 +1,0 @@
-{
-  /** Python-specific workspace settings */
-  "[python]": {
-    "editor.defaultFormatter": "charliermarsh.ruff",
-    "editor.formatOnType": true
-  }
-}
