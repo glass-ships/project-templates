@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 import AppBackToTopButton from "@/components/AppBackToTopButton";
 import AppButton from "../components/AppButton";
 import AppFlex from "../components/AppFlex";
@@ -5,11 +7,13 @@ import AppIcon from "../components/AppIcon";
 import AppSection from "@/components/AppSection";
 import AppTooltip from "@/components/AppTooltip";
 import faIcons from "@/global/icons";
+import Navbar from "@/components/Navbar";
 // import AppGrid from "@/components/AppGrid";
+import "@/global/styles.scss";
 
 const icons = ["not-an-icon", "loading", "logo", ...Object.keys(faIcons)];
 
-// Split into 4 contiguous groups
+// Split icons into groups for different sizes
 const groups: string[][] = [];
 const groupCount = 4;
 const chunkSize = Math.ceil(icons.length / groupCount);
@@ -18,17 +22,17 @@ for (let i = 0; i < groupCount; i++) {
   const end = start + chunkSize;
   groups.push(icons.slice(start, end));
 }
-
-// Sizes for each group (adjust if your AppIcon supports different size tokens)
 const groupSizes = ["large", "medium", "small", "tiny"] as const;
 
 export default function Testbed() {
   return (
-    <>
+    <main>
+      <Navbar />
+
       <AppBackToTopButton ariaLabel="Back to Top" />
 
       {/* Title */}
-      <AppSection width="big" height="auto" design="fill">
+      <AppSection width="medium" height="auto" design="fill">
         <h1>Testbed</h1>
         <h2>Test Header 2</h2>
         <h3>Test Header 3</h3>
@@ -43,17 +47,17 @@ export default function Testbed() {
         <AppFlex>
           {/* normal */}
           <AppFlex direction="row">
-            <AppButton text="Button 1" color="primary" onClick={() => console.log("Button 1 clicked")} />
+            <AppButton text="Button 1" color="primary" onClick={() => toast.success("Button 1 clicked")} />
             <AppButton
               text="Button 2"
               color="secondary"
               icon="vial"
               iconPosition="left"
-              onClick={() => console.log("Button 2 clicked")}
+              onClick={() => toast.error("Button 2 clicked")}
             />
             <AppButton text="Button 3" icon="vial" color="tertiary" linkTo="/testbed" />
             <AppButton text="Button 4" icon="vial" color="none" linkTo="/" />
-            <AppButton icon="vial" iconColor="white" />
+            <AppButton icon="vial" iconColor="white" onClick={() => console.log("Button 5 clicked")} />
           </AppFlex>
 
           {/* circle */}
@@ -144,6 +148,6 @@ export default function Testbed() {
           <p>Hover over me too.</p>
         </AppTooltip>
       </AppSection>
-    </>
+    </main>
   );
 }

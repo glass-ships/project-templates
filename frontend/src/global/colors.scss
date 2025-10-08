@@ -1,36 +1,36 @@
 /* Neutrals */
-$white: #ffffff;
-$off-white: #fafafa;
-$light-grey: #eeeeee;
-$grey: #a0a0a0;
-$dark-grey: #808080;
-$off-black: #404040;
-$black: #000000;
+$white: oklch(1.0 0 0);
+$off-white: oklch(0.98 0 0);
+$light-grey: oklch(0.94 0 0);
+$grey: oklch(0.67 0 0);
+$dark-grey: oklch(0.57 0 0);
+$off-black: oklch(0.32 0 0);
+$black: oklch(0 0 0);
 
 /* DISCORD_COLORS */
-$grey-darkest: #1e2124;
-$grey-darker: #2e3136;
-$grey: #36393e;
-$grey-lighter: #4a4c51;
-$grey-lightest: #424549;
-$blue: #7289da;
+$grey-darkest: oklch(0.18 0.01 270);
+$grey-darker: oklch(0.23 0.01 270);
+$grey: oklch(0.26 0.01 270);
+$grey-lighter: oklch(0.34 0.01 270);
+$grey-lightest: oklch(0.31 0.01 270);
+$blue: oklch(0.58 0.19 271);
 
 /* CP77 */
-$raisin_black: #272932;
-$blood_red: #710000;
-$yellow: #f3e500;
-$cyan_keppel: #1ac5b0;
-$blue_electric: #3e7bf3;
-$purple: #9370db;
-$pink_frostbite: #e455ae;
-$steel_pink: #cb1dcd;
-$pale_silver: #d1c5c0;
+$raisin_black: oklch(0.21 0.02 280);
+$blood_red: oklch(0.29 0.16 29);
+$yellow: oklch(0.89 0.20 102);
+$cyan_keppel: oklch(0.70 0.14 180);
+$blue_electric: oklch(0.56 0.20 264);
+$purple: oklch(0.57 0.19 296);
+$pink_frostbite: oklch(0.67 0.24 328);
+$steel_pink: oklch(0.55 0.29 318);
+$pale_silver: oklch(0.82 0.02 65);
 
 /* CYBERPUNK */
-$deep_purple: #5b209a;
-$neon_blue: #00ffff;
-$neon_green: #39ff14;
-$neon_pink: #ff1493;
-$neon_yellow: #ffff00;
-$cyber_orange: #ff4500;
-$cyber_red: #ff0000;
+$deep_purple: oklch(0.42 0.22 292);
+$neon_blue: oklch(0.91 0.14 196);
+$neon_green: oklch(0.88 0.28 130);
+$neon_pink: oklch(0.63 0.31 343);
+$neon_yellow: oklch(0.97 0.21 109);
+$cyber_orange: oklch(0.65 0.26 40);
+$cyber_red: oklch(0.63 0.26 29);

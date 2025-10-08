@@ -11,16 +11,15 @@
   justify-items: center;
   text-align: center;
   scroll-snap-type: y mandatory;
-  border-radius: 0 0.5rem;
+  // border-radius: 0 0.5rem;
   background: linear-gradient(rgb(0, 0, 0, 0.1) 0%, rgb(0, 0, 0, 0.5) 50%, rgb(0, 0, 0, 0.3) 100%);
   background: -webkit-linear-gradient(bottom, rgb(0, 0, 0, 0.1) 0%, rgb(0, 0, 0, 0.5) 50%, rgb(0, 0, 0, 0.3) 100%);
   background: -moz-linear-gradient(bottom, rgb(0, 0, 0, 0.1) 0%, rgb(0, 0, 0, 0.5) 50%, rgb(0, 0, 0, 0.3) 100%);
   filter: drop-shadow(0 20px 13px rgb(0 0 0 / 0.08));
-  // backdrop-filter: blur(10px);
   // &.normal {}
   &.fill {
     // background: v.$black;
-    &:nth-child(odd) { background: v.$black; }
+    &:nth-child(odd) { background: v.$off-black; }
     &:nth-child(even) { background: v.$dark-grey; }
   }
   &:last-of-type { flex-grow: 1; }
