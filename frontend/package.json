@@ -34,7 +34,6 @@
     "@types/react-dom": "*",
     "@vitejs/plugin-react": "*",
     "@biomejs/biome": "*",
-    "globals": "*",
     "typescript": "*",
     "vite": "*",
     "vite-plugin-svgr": "^4.5.0"
