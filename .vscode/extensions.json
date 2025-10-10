@@ -13,8 +13,8 @@
     "charliermarsh.ruff", // Linting and formatting for Python
     /** Web Development */
     // Linting
+    "biomejs.biome",
     "yoavbls.pretty-ts-errors",
-    "dbaeumer.vscode-eslint",
     // Testing
     "ms-playwright.playwright",
     "astro-build.astro-vscode", // for Astro projects
