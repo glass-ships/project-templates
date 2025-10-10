@@ -1,28 +1,19 @@
 @use "variables" as v;
+@import "normalize.css";
 
 * {
-  box-sizing: border-box;
   font-family: v.$sans;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-}
-
 main {
-  min-height: 100vh;
-  background: v.$desaturated2;
-  color: v.$light-grey;
+  min-height: 100dvh;
   margin: 0;
   padding: 0;
- 
   z-index: 1;
- 
+
+  background: oklch(0.26 0.08 260);
+  color: v.$light-grey;
+
   display: flex;
   flex-direction: column;
   position: relative;
@@ -73,15 +64,15 @@ h5 {
   text-shadow: 0 0 10px v.$black;
 }
 p {
-  font-size: clamp(v.$small, -0.8rem + 4vw, v.$xl);
+  font-size: clamp(v.$tiny, -0.8rem + 4vw, v.$xl);
   font-weight: v.$normal;
   color: v.$light-grey;
   line-height: v.$spacing;
   max-width: 50ch;
-  align-self: center;
+  text-align: center;
 }
 a {
-  font-size: clamp(v.$small, -0.8rem + 4vw, v.$xl);
+  font-size: clamp(v.$tiny, -0.8rem + 4vw, v.$xl);
   font-weight: v.$normal;
   color: v.$tertiary-mid;
   text-decoration: none;
@@ -96,15 +87,12 @@ h1, h2, h3, h4, h5, h6, p, a {
   color: #e0e7ff;
 }
 
-/**--------------
-  Media styles
-----------------*/
+/**------------ 
+  Global styles 
+---------------*/
 
-img {
-  max-width: 100%;
-  height: auto;
+[disabled] {
+  filter: saturate(0);
+  opacity: 0.35;
+  pointer-events: none;
 }
-
-/**--------------
-  Media queries
-----------------*/

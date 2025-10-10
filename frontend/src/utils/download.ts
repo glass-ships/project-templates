@@ -23,7 +23,7 @@ export const downloadSvg = (
   element: SVGSVGElement,
   filename: string,
   removeEls: string[] = ["clipPath"],
-  removeAttrs: RegExp[] = [/class/, /^data-/, /^aria-/, /tabindex/, /role/]
+  removeAttrs: RegExp[] = [/class/, /^data-/, /^aria-/, /tabindex/, /role/],
 ) => {
   /** make editable clone of svg node */
   const clone = element.cloneNode(true) as SVGSVGElement;

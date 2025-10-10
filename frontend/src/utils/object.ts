@@ -8,7 +8,7 @@ export const mergeArrays = (
   arrayA: Obj[],
   arrayB: Obj[],
   /** only include entries that are in array A */
-  exclusive = false
+  exclusive = false,
 ): Obj[] => {
   /** store to keep id-deduped list of entries */
   const result: { [key: string]: Obj } = {};

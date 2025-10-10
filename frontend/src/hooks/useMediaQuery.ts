@@ -6,7 +6,7 @@ const isMobile = useMediaQuery('(max-width: 768px)');
 
 return <p>{isMobile ? 'Mobile View' : 'Desktop View'}</p>;
 */
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);

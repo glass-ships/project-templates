@@ -5,7 +5,7 @@
 
 // "use client";
 
-import * as React from "react";
+import type React from "react";
 
 import { useVisuallyHidden } from "react-aria";
 

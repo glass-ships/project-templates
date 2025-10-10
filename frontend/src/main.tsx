@@ -1,22 +1,24 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-// import Home from "@/pages/Home";
-import TestNexus from "@/pages/TestNexus";
+import { BrowserRouter, Route, Routes } from "react-router";
 import NotFound from "@/pages/NotFound";
 import Testbed from "@/pages/Testbed";
+import TestNexus from "@/pages/TestNexus";
+import "@/global/icons"; // Ensure icons are loaded
 
-createRoot(document.getElementById("root")!).render(
+const rootElement = document.getElementById("root");
+if (!rootElement) {
+  throw new Error("Root element not found");
+}
+
+createRoot(rootElement).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Testbed />} />
         <Route path="/nexus" element={<TestNexus />} />
-        {/* <Route path="/" element={<Home />} /> */}
-        {/* <Route path="/testbed" element={<Testbed />} /> */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
-  </StrictMode>
+  </StrictMode>,
 );

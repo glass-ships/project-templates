@@ -9,7 +9,7 @@ if (error) return <p>Error: {error.message}</p>;
 return <ul>{data?.map(user => <li key={user.id}>{user.name}</li>)}</ul>;
 */
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function useFetch<T>(url: string) {
   const [data, setData] = useState<T | null>(null);

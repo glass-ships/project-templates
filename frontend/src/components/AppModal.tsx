@@ -1,28 +1,34 @@
-import React, { useCallback, useEffect, useRef } from "react";
-import AppButton from "./AppButton";
+import type React from "react";
+import { useCallback, useEffect, useRef } from "react";
 import styles from "./AppModal.module.scss";
 
 export interface AppModalProps {
   isVisible?: boolean;
-  onToggle?: (e?: any) => void;
   children?: React.ReactNode;
+  onToggle?: (e?: unknown) => void;
+  onKeyDown?: (e: KeyboardEvent | React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
-export default function AppModal({ isVisible, onToggle, children }: AppModalProps) {
+export default function AppModal({ isVisible, children, onToggle, onKeyDown }: AppModalProps) {
   const modalRef = useRef<HTMLDivElement | null>(null);
+  const isVisibleRef = useRef(isVisible);
 
   const toggleModal = useCallback(() => {
-    onToggle ? onToggle() : (isVisible = false);
+    if (onToggle) {
+      onToggle();
+    } else {
+      isVisibleRef.current = false;
+    }
   }, [onToggle]);
 
   const handleClickOutside = useCallback(
-    (event: any) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        event.stopPropagation();
+    (event: unknown) => {
+      if (modalRef.current && !modalRef.current.contains((event as MouseEvent).target as Node)) {
+        (event as MouseEvent).stopPropagation();
         toggleModal();
       }
     },
-    [toggleModal]
+    [toggleModal],
   );
 
   const handleKeyDown = useCallback(
@@ -31,8 +37,11 @@ export default function AppModal({ isVisible, onToggle, children }: AppModalProp
         event.stopPropagation();
         toggleModal();
       }
+      if (onKeyDown) {
+        onKeyDown(event);
+      }
     },
-    [toggleModal]
+    [onKeyDown, toggleModal],
   );
 
   useEffect(() => {
@@ -47,42 +56,27 @@ export default function AppModal({ isVisible, onToggle, children }: AppModalProp
   }, [isVisible, handleClickOutside, handleKeyDown]);
 
   /** Conditional Render */
-  return isVisible ?
-      <div ref={modalRef} className={styles.modalBackdrop} onClick={onToggle}>
-        <div
-          className={styles.modalContainer}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          onKeyDown={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          {children}
-          <AppButton onClick={onToggle} icon="xmark" design="circle" id="modal-close" />
-        </div>
-      </div>
-    : null;
-
-  /** Toggle CSS Display */
-  return (
+  return isVisible ? (
     <div
       ref={modalRef}
       className={styles.modalBackdrop}
-      onClick={toggleModal}
-      style={{ display: isVisible ? "flex" : "none" }}
-      aria-modal="true"
-      aria-hidden={!isVisible}
+      role="dialog"
+      onClick={onToggle}
+      onKeyDown={handleKeyDown}
+      tabIndex={-1}
     >
       <div
+        role="document"
         className={styles.modalContainer}
         onClick={(e) => {
           e.stopPropagation();
         }}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+        }}
       >
         {children}
-        <AppButton onClick={toggleModal} icon="xmark" design="circle" id="modal-close" />
       </div>
     </div>
-  );
+  ) : null;
 }

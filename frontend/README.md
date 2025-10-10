@@ -31,46 +31,17 @@ To start the development server, run:
 bun run dev
 ```
 
-## Tips
+## Notes
 
-- To disable console logging twice, open `main.tsx` and wrap your App compoent using React.StrictMode:
+Many of these components and libraries are optional and can be removed if not needed,
+or replaced with alternatives of your choice.
 
-  ```ts
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  ```
+For example:
 
-- To allow absolute imports, open `tsconfig.json` and add the following lines to the compiler options:
+- AppTooltip can be replaced with [react-tooltip](https://www.npmjs.com/package/react-tooltip) or similar.
 
-  ```json
-        "paths": {
-            "@/*": ["*"]
-        },
-  ```
+Useful component libraries include:
 
-### Useful Modules
-
-- For typing: [@types/node](https://www.npmjs.com/package/@types/node)
-- For linting/formatting: [prettier](https://www.npmjs.com/package/prettier)
-- For client-side routing: [react-router-dom](https://www.npmjs.com/package/react-router-dom)
-- For SVG usage in Vite: [vite-plugin-svgr](https://www.npmjs.com/package/vite-plugin-svgr)
-- match-sorter
-  Fontawesome Icons:
-
-- "@fortawesome/fontawesome-svg-core": "\*",
-- "@fortawesome/free-brands-svg-icons": "\*",
-- "@fortawesome/free-regular-svg-icons": "\*",
-- "@fortawesome/free-solid-svg-icons": "\*",
-- "@fortawesome/react-fontawesome": "\*",
-
-Styling with SCSS:
-
-- sass
-- sass-loader
-
-Useful components:
-
-- react-aria-components
-- react-select
-- react-toastify
+- [react-aria-components](https://react-spectrum.adobe.com/react-aria/index.html)
+- [react-select](https://react-select.com/home)
+- [react-toastify](https://github.com/fkhadra/react-toastify)

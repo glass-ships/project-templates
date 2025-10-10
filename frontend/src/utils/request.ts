@@ -42,7 +42,7 @@ export const request = async <Response>(
   /** parse response mode */
   parse: "text" | "json" = "json",
   /** whether open request url in new tab */
-  newTab = false
+  newTab = false,
 ): Promise<Response> => {
   /** get string of url parameters/options */
   const paramsObject = new URLSearchParams();
@@ -60,7 +60,7 @@ export const request = async <Response>(
 
   /** assemble url to query */
   let url = api + prefix + path;
-  const paramsString = "?" + paramsObject.toString();
+  const paramsString = `?${paramsObject.toString()}`;
   if (paramsString !== "?") url = url + paramsString;
 
   if (newTab) window.open(url);
@@ -130,8 +130,7 @@ export const request = async <Response>(
   let parsed: Response | undefined;
   try {
     parsed = parse === "text" ? await response.clone().text() : await response.clone().json();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (e) {
+  } catch (_error) {
     error = `Couldn't parse response as ${parse}`;
   }
 

@@ -21,7 +21,7 @@ export const formatNumber = (value: number, compact = false) =>
 
 /** safe copy to clipboard with notifications */
 export const copyToClipboard = async (
-  value: string
+  value: string,
   // message = "Copied to clipboard",
 ) => {
   try {

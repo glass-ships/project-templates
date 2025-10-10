@@ -57,6 +57,6 @@ export const getTextSize = (text: string, font: string) => {
 /** truncate text by displayed size instead of # of characters */
 export const truncateBySize = (text: string, limit: number, font: string = "10px Poppins") => {
   if (getTextSize(text, font).width < limit) return text;
-  while (getTextSize(text + "...", font).width > limit && text.length > 3) text = text.slice(0, -1);
-  return text + "...";
+  while (getTextSize(`${text}...`, font).width > limit && text.length > 3) text = text.slice(0, -1);
+  return `${text}...`;
 };

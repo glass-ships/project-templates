@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface ModalType {
   children?: ReactNode;
@@ -8,11 +8,8 @@ interface ModalType {
 
 export default function Modal(props: ModalType) {
   return (
-    <>
-      <div className="modal-overlay">
-        <div className="modal-box">{props.children}</div>
-      </div>
-    </>
+    <div className="modal-overlay">
+      <div className="modal-box">{props.children}</div>
+    </div>
   );
 }
-//
