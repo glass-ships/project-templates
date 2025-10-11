@@ -1,51 +1,75 @@
-import type React from "react";
+import type { ReactNode } from "react";
 import { useCallback, useEffect, useRef } from "react";
+
 import styles from "./AppModal.module.scss";
 
-export interface AppModalProps {
-  isVisible?: boolean;
-  children?: React.ReactNode;
-  onToggle?: (e?: unknown) => void;
+type ModalProps = {
+  children?: ReactNode;
+  isOpen: boolean;
+  toggle?: () => void;
   onKeyDown?: (e: KeyboardEvent | React.KeyboardEvent<HTMLDivElement>) => void;
-}
+};
 
-export default function AppModal({ isVisible, children, onToggle, onKeyDown }: AppModalProps) {
-  const modalRef = useRef<HTMLDivElement | null>(null);
-  const isVisibleRef = useRef(isVisible);
+export default function AppModal(props: ModalProps) {
+  const modalRef = useRef<HTMLDialogElement | null>(null);
 
   const toggleModal = useCallback(() => {
-    if (onToggle) {
-      onToggle();
+    if (props.toggle) {
+      props.toggle();
     } else {
-      isVisibleRef.current = false;
+      if (modalRef.current) {
+        if (modalRef.current.open) {
+          modalRef.current.close();
+          document.body.style.overflow = "";
+        } else if (!modalRef.current.open) {
+          modalRef.current.showModal();
+          document.body.style.overflow = "hidden";
+        }
+      }
     }
-  }, [onToggle]);
+  }, [props.toggle]);
+
+  useEffect(() => {
+    if (props.isOpen && modalRef.current) {
+      document.body.style.overflow = "hidden";
+      if (!modalRef.current.open) {
+        modalRef.current.showModal();
+      }
+    } else if (modalRef.current) {
+      document.body.style.overflow = "";
+      if (modalRef.current.open) {
+        modalRef.current.close();
+      }
+    }
+  }, [props.isOpen]);
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent | React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleModal();
+      }
+      if (props.onKeyDown) {
+        props.onKeyDown(event);
+      }
+    },
+    [props.onKeyDown, toggleModal],
+  );
 
   const handleClickOutside = useCallback(
-    (event: unknown) => {
-      if (modalRef.current && !modalRef.current.contains((event as MouseEvent).target as Node)) {
-        (event as MouseEvent).stopPropagation();
+    (event: MouseEvent) => {
+      if (modalRef.current && event.target === modalRef.current) {
+        event.preventDefault();
+        event.stopPropagation();
         toggleModal();
       }
     },
     [toggleModal],
   );
 
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent | React.KeyboardEvent<HTMLDivElement>) => {
-      if (event.key === "Escape") {
-        event.stopPropagation();
-        toggleModal();
-      }
-      if (onKeyDown) {
-        onKeyDown(event);
-      }
-    },
-    [onKeyDown, toggleModal],
-  );
-
   useEffect(() => {
-    if (isVisible) {
+    if (props.isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleKeyDown);
     }
@@ -53,30 +77,20 @@ export default function AppModal({ isVisible, children, onToggle, onKeyDown }: A
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isVisible, handleClickOutside, handleKeyDown]);
+  }, [props.isOpen, handleClickOutside, handleKeyDown]);
 
-  /** Conditional Render */
-  return isVisible ? (
-    <div
-      ref={modalRef}
-      className={styles.modalBackdrop}
-      role="dialog"
-      onClick={onToggle}
-      onKeyDown={handleKeyDown}
-      tabIndex={-1}
-    >
-      <div
-        role="document"
-        className={styles.modalContainer}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-        onKeyDown={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        {children}
-      </div>
-    </div>
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  // if (!props.isOpen) return null;
+
+  return props.isOpen ? (
+    <dialog ref={modalRef} className={styles.modalBackdrop}>
+      <div className={styles.modalContainer}>{props.children}</div>
+    </dialog>
   ) : null;
 }
