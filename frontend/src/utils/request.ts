@@ -6,12 +6,12 @@ export const prefix = "/api";
 /** --------------------------------------------------------------
  * Simple Typescript function to make GET requests to the backend
  * From: https://github.com/blekhmanlab/compendium_website
- ---------------------------------------------------------------*/
-export const requestSimple = async <Type>(url: string, type: string = "json") => {
+------------------------------------------------------------------*/
+export const requestSimple = async <Type>(url: string, parseAs: string = "json") => {
   const options: RequestInit = { redirect: "follow" };
   const response = await fetch(url, options);
   if (!response.ok) throw Error("Response not OK");
-  if (type === "text") return (await response.text()) as Type;
+  if (parseAs === "text") return (await response.text()) as Type;
   else return (await response.json()) as Type;
 };
 
@@ -27,20 +27,20 @@ const cache = new Map<string, Response>();
 
 /** generic fetch request wrapper */
 export const request = async <Response>(
-  /** request url */
+  /** API endpoint, appended to api+prefix */
   path = "",
   /**
    * key/value object for url parameters.
    * use primitive for single, array for multiple/duplicate.
-   *    { ids: "1,2,3" } -> ?ids=1,2,3
+   *  ?ids=1,2,3 -> { ids: "1,2,3" }
    * or
-   *    { id: [1,2,3] } -> ?id=1&id=2&id=3
+   *  ?id=1&id=2&id=3 -> { id: [1,2,3] }
    */
   params: Params = {},
   /** fetch options */
   options: RequestInit = {},
   /** parse response mode */
-  parse: "text" | "json" = "json",
+  parseAs: "text" | "json" = "json",
   /** whether open request url in new tab */
   newTab = false,
 ): Promise<Response> => {
@@ -72,7 +72,7 @@ export const request = async <Response>(
   // const id = JSON.stringify(request, ["url", "method", "headers"]);
 
   /** first check if request is cached */
-  let response = cache.get(path);
+  let response = cache.get(url);
 
   /** logging info */
   const cached = response ? "cached" : "new";
@@ -97,41 +97,41 @@ export const request = async <Response>(
   /** check response code */
   if (!response.ok) {
     error = `Response not OK`;
-    // switch (response.status) {
-    //   case 401:
-    //     error = `Unauthorized`;
-    //     break;
-    //   case 403:
-    //     error = `Forbidden`;
-    //     break;
-    //   case 404:
-    //     return parse === "text" ?
-    //         ("Event not found" as unknown as Response)
-    //       : ({ error: "Event not found" } as unknown as Response);
-    //   case 500:
-    //     error = `Internal Server Error`;
-    //     break;
-    //   case 502:
-    //     error = `Bad Gateway`;
-    //     break;
-    //   case 503:
-    //     error = `Service Unavailable`;
-    //     break;
-    //   case 504:
-    //     error = `Gateway Timeout`;
-    //     break;
-    //   default:
-    //     error = `Response not OK`;
-    //     break;
-    // }
+    switch (response.status) {
+      case 401:
+        error = `Unauthorized`;
+        break;
+      case 403:
+        error = `Forbidden`;
+        break;
+      case 404:
+        return parseAs === "text"
+          ? ("Event not found" as unknown as Response)
+          : ({ error: "Event not found" } as unknown as Response);
+      case 500:
+        error = `Internal Server Error`;
+        break;
+      case 502:
+        error = `Bad Gateway`;
+        break;
+      case 503:
+        error = `Service Unavailable`;
+        break;
+      case 504:
+        error = `Gateway Timeout`;
+        break;
+      default:
+        error = `Response not OK`;
+        break;
+    }
   }
 
   /** parse response */
   let parsed: Response | undefined;
   try {
-    parsed = parse === "text" ? await response.clone().text() : await response.clone().json();
+    parsed = parseAs === "text" ? await response.clone().text() : await response.clone().json();
   } catch (_error) {
-    error = `Couldn't parse response as ${parse}`;
+    error = `Couldn't parse response as ${parseAs}`;
   }
 
   // if (import.meta.env.MODE !== "test")

@@ -19,11 +19,11 @@
     "@tanstack/react-query": "*",
     "lodash": "*",
     "match-sorter": "*",
-    "react": "^*",
-    "react-dom": "^*",
+    "react": "*",
+    "react-dom": "*",
     "react-router": "*",
     "react-select": "*",
-    "react-toastify": "^*",
+    "react-toastify": "*",
     "sass": "*",
     "sass-loader": "*"
   },
@@ -34,9 +34,10 @@
     "@types/react-dom": "*",
     "@vitejs/plugin-react": "*",
     "@biomejs/biome": "*",
+    "babel-plugin-react-compiler": "*",
     "typescript": "*",
     "vite": "*",
-    "vite-plugin-svgr": "^4.5.0"
+    "vite-plugin-svgr": "*"
   },
   "_notes_": {
     "dependencies": "Use `bunx depcheck` to check for unused or missing dependencies"

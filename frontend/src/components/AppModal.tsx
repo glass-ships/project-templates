@@ -43,8 +43,10 @@ export default function AppModal(props: ModalProps) {
     }
   }, [props.isOpen]);
 
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent | React.KeyboardEvent<HTMLDivElement>) => {
+  useEffect(() => {
+    if (!props.isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
         event.stopPropagation();
@@ -53,31 +55,24 @@ export default function AppModal(props: ModalProps) {
       if (props.onKeyDown) {
         props.onKeyDown(event);
       }
-    },
-    [props.onKeyDown, toggleModal],
-  );
+    };
 
-  const handleClickOutside = useCallback(
-    (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && event.target === modalRef.current) {
         event.preventDefault();
         event.stopPropagation();
         toggleModal();
       }
-    },
-    [toggleModal],
-  );
+    };
 
-  useEffect(() => {
-    if (props.isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("keydown", handleKeyDown);
-    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [props.isOpen, handleClickOutside, handleKeyDown]);
+  }, [props.isOpen, props.onKeyDown, toggleModal]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -85,8 +80,6 @@ export default function AppModal(props: ModalProps) {
       document.body.style.overflow = "";
     };
   }, []);
-
-  // if (!props.isOpen) return null;
 
   return props.isOpen ? (
     <dialog ref={modalRef} className={styles.modalBackdrop}>

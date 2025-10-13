@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import AppButton from "./AppButton";
 import "./AppBackToTopButton.scss";
 import AppTooltip from "./AppTooltip";
@@ -36,10 +36,7 @@ const AppBackToTopButton: React.FC<AppBackToTopButtonProps> = ({
     };
   }, []);
 
-  // Computed equivalent - show control after threshold
-  const show = useMemo(() => {
-    return scrollY > windowHeight * thresholdVH;
-  }, [scrollY, windowHeight, thresholdVH]);
+  const show = scrollY > windowHeight * thresholdVH;
 
   // Smooth scroll to anchor or page top
   const scrollTop = () => {
