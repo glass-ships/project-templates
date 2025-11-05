@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import AppButton from "./AppButton";
+import AppButton from "./ui/AppButton";
 
 export default function TestIframe() {
   useEffect(() => {

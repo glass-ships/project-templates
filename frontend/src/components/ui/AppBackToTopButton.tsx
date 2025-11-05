@@ -1,8 +1,8 @@
 import type React from "react";
 import { useEffect, useState } from "react";
-import AppButton from "./AppButton";
+import { Tooltip } from "react-tooltip";
 import "./AppBackToTopButton.scss";
-import AppTooltip from "./AppTooltip";
+import AppButton from "./AppButton";
 
 interface AppBackToTopButtonProps {
   targetId?: string;
@@ -50,17 +50,15 @@ const AppBackToTopButton: React.FC<AppBackToTopButtonProps> = ({
 
   return (
     <div className="to-top" style={{ display: show ? "flex" : "none" }} role="note" aria-label={ariaLabel}>
-      <AppTooltip content={ariaLabel} position="left">
-        <AppButton
-          // design="circle"
-          color="primary"
-          text={label ? label : undefined}
-          icon="angles-up"
-          iconPosition="left"
-          iconColor="yellow"
-          onClick={scrollTop}
-        />
-      </AppTooltip>
+      <Tooltip content={ariaLabel} anchorSelect="#back-to-top-button" place="left" />
+      <AppButton
+        id="back-to-top-button"
+        design="circle"
+        color="primary"
+        text={label ? label : undefined}
+        icon="angles-up"
+        onClick={scrollTop}
+      />
     </div>
   );
 };

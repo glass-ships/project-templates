@@ -1,0 +1,77 @@
+@use "@/global/variables" as v;
+
+.button {
+  display: inline-flex;
+  appearance: none;
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  gap: 10px;
+  border: none;
+  box-shadow: v.$shadow-m;
+  transition: all v.$fast;
+  cursor: pointer;
+
+  &.text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: light-dark(v.$off-white, v.$off-black);
+  }
+
+  /** Color variants */
+  &.primary {
+    background: v.$primary-light;
+  }
+  &.secondary {
+    background: v.$secondary-light;
+  }
+  &.tertiary {
+    background: v.$tertiary;
+    color: v.$off-black;
+  }
+  &.none {
+    background-color: v.$bg-light;
+    color: v.$text;
+  }
+
+  &:hover,
+  &:active {
+    filter: brightness(85%) contrast(110%) hue-rotate(-5deg);
+    box-shadow: v.$shadow-l;
+    &.none {
+      background-color: v.$bg;
+    }
+  }
+  &:focus {
+    box-shadow: 0 0 0 2px v.$grey;
+  }
+
+  /** Design variants */
+  &.normal {
+    min-width: min(200px, calc(100% - 40px));
+    min-height: 40px;
+    padding: 5px 20px;
+    border-radius: v.$rounded;
+  }
+
+  &.circle {
+    border-radius: 999px;
+    &.text {
+      min-width: 2em;
+      min-height: 2em;
+      padding: 0.25em 0.75em;
+    }
+    &:not(.text) {
+      width: 2.5em;
+      height: 2.5em;
+    }
+  }
+
+  &.small {
+    padding: 0.25rem 0.5rem;
+    border-radius: v.$rounded;
+    width: fit-content;
+  }
+}
