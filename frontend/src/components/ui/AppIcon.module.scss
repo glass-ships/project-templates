@@ -1,4 +1,6 @@
-.appicon {  
+@use "@/global/variables" as v;
+
+.appicon {
   &.tiny { height: 1em; width: 1em; }
   &.small { height: 1.5em; width: 1.5em; }
   &.medium { height: 2em; width: 2em; }
@@ -6,7 +8,7 @@
 }
 
 .background {
-  background-color: rgb(51 65 85);
+  background-color: v.$bg-light;
   border-radius: 100%;
   box-shadow: 5px 5px 10px 1px #000;
   display: inline-flex;

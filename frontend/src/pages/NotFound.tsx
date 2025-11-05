@@ -1,7 +1,6 @@
 import img404 from "@/assets/images/404.png";
-import AppButton from "@/components/AppButton";
-// import AppSection from "@/components/AppSection";
 import Nexus from "@/components/Nexus";
+import AppButton from "@/components/ui/AppButton";
 import "@/global/styles.scss";
 
 const style = {

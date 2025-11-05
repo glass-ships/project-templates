@@ -7,8 +7,8 @@
 
 	/** Web Development Settings */
 	// uncomment the appropriate line below depending on your OS
-	// "biome.lsp.bin": "frontend/node_modules/@biomejs/cli-linux-x64/biome",
-	"biome.lsp.bin": "frontend/node_modules/@biomejs/cli-win32-x64/biome.exe",
+	"biome.lsp.bin": "frontend/node_modules/@biomejs/cli-linux-x64/biome",
+	// "biome.lsp.bin": "frontend/node_modules/@biomejs/cli-win32-x64/biome.exe",
 	"biome.configurationPath": "frontend/biome.json",
 	// "eslint.debug": true,
 	// "eslint.format.enable": true,

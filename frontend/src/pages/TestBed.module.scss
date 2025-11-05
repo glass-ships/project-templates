@@ -1,0 +1,41 @@
+@use "@/global/variables" as v;
+
+$colors: (
+  "primary": v.$primary,
+  "primary-light": v.$primary-light,
+  "primary-dark": v.$primary-dark,
+  "secondary": v.$secondary,
+  "secondary-light": v.$secondary-light,
+  "secondary-dark": v.$secondary-dark,
+  "tertiary": v.$tertiary,
+  "success": v.$success,
+  "error": v.$error,
+);
+
+.swatch-container {
+  columns: 3 auto;
+}
+
+.swatch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 100px;
+  // border: 1px solid v.$black;
+  border-radius: v.$rounded;
+  box-shadow: v.$shadow-l;
+
+  @each $name, $color in $colors {
+    &.#{$name} {
+      background-color: $color;
+    }
+  }
+}
+
+.color-name {
+  font-size: v.$fs-medium;
+  font-weight: v.$bold;
+  color: v.$off-white;
+  text-shadow: 0 0 5px v.$black;
+}

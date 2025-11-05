@@ -16,8 +16,22 @@ export default defineConfig({
     })
   ],
   build: {
-    outDir: "../static",
+    outDir: "../dist",
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router"],
+          "query-vendor": ["@tanstack/react-query"],
+          "ui-vendor": ["react-select", "@fortawesome/react-fontawesome"],
+          icons: [
+            "@fortawesome/free-solid-svg-icons",
+            "@fortawesome/free-regular-svg-icons",
+            "@fortawesome/free-brands-svg-icons",
+          ],
+        },
+      },
+    },
   },
   resolve: {
     alias: [

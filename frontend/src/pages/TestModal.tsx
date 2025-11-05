@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import AppButton from "@/components/AppButton";
-import Modal from "@/components/AppModal";
-import AppSection from "@/components/AppSection";
+import AppButton from "@/components/ui/AppButton";
+import Modal from "@/components/ui/AppModal";
+import AppSection from "@/components/ui/AppSection";
 
 export default function TestModal() {
   const [isOpen, setIsOpen] = useState(false);
