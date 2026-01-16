@@ -180,7 +180,13 @@ function TestIcons() {
         {sizeGroups.map((groupSize, gidx) => (
           <AppFlex key={groupSize} direction="row">
             {icons.map((icon, _idx) => (
-              <AppIcon key={`${groupSize}-${icon}`} icon={icon} color="oklch(0.6 0.1 185)" size={sizeGroups[gidx]} background={!(gidx % 2)} />
+              <AppIcon
+                key={`${groupSize}-${icon}`}
+                icon={icon}
+                color="oklch(0.6 0.1 185)"
+                size={sizeGroups[gidx]}
+                background={!(gidx % 2)}
+              />
             ))}
           </AppFlex>
         ))}

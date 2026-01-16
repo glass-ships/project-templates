@@ -1,7 +1,8 @@
 import { findIconDefinition, type IconName, type IconPrefix } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon as FaIcon } from "@fortawesome/react-fontawesome";
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 
+import { lazyImport } from "@/utils/lazyImport";
 import styles from "./AppIcon.module.scss";
 
 export type AppIconProps = {
@@ -35,7 +36,7 @@ function getCustomIcon(props: AppIconProps) {
   const suffix = `/${icon}.svg`;
   const name = Object.keys(iconModules).find((k) => k.endsWith(suffix));
   if (!name) return <FallbackSvg size={size} color={color} className={className} background={background} />;
-  const SvgComponent = lazy(async () => await import(`@/assets/icons/${icon}.svg`));
+  const SvgComponent = lazyImport(`@/assets/icons/${icon}.svg`);
 
   return (
     <Suspense fallback={<FallbackSvg size={size} color={color} className={className} background={background} />}>
@@ -72,7 +73,7 @@ export default function AppIcon({
   if (faIcon) {
     return (
       <div id={id} className={`${styles[size]} ${background ? styles.background : ""}`}>
-        <FaIcon icon={faIcon} color={color } className={computedClassName} />
+        <FaIcon icon={faIcon} color={color} className={computedClassName} />
       </div>
     );
   }
