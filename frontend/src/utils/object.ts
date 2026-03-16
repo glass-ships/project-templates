@@ -65,3 +65,12 @@ export const parse = <Type>(value: string, defaultValue: Type) => {
     return defaultValue;
   }
 };
+
+
+// function to ensure that argument is not null or undefined
+function ensure<T>(argument: T | undefined | null, message: string = 'This value was promised to be there.'): T {
+  if (argument === undefined || argument === null) {
+    throw new TypeError(message);
+  }
+  return argument;
+}
