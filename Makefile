@@ -4,9 +4,10 @@ VERSION = $(shell uv --project src/python_project version -s)
 SCHEMADIR = $(ROOTDIR)/backend/src/monarch_py/datamodels
 
 
+# This nifty grep/sort/awk pipeline collects all comments headed by the double "#" symbols next to each target and recycles them as comments
 .PHONY: help
-help:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
+help: ## Print this help message
+	@grep -hE '^[[:alnum:]_/.-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "\033[36m%-25s\033[0m %s\n", $$1, $$2}'
 
 ### Installation and Setup ###
 
