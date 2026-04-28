@@ -1,33 +1,54 @@
+import babel from "@rolldown/plugin-babel";
 import { fileURLToPath, URL } from "node:url";
-import react from "@vitejs/plugin-react";
+import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react({
-      babel: {
-        plugins: ["babel-plugin-react-compiler"],
-      },
+    react(),
+    babel({
+      presets: [reactCompilerPreset()],
     }),
     svgr({
       include: "src/assets/icons/*.svg",
-    })
+    }),
   ],
+  // Example of route proxying to a backend server
+  server: {
+    host: "0.0.0.0",
+    port: 5173,
+    proxy: {
+      "/api": {
+        target: "http://localhost:9000",
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
     outDir: "../dist",
     emptyOutDir: true,
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        manualChunks: {
-          "react-vendor": ["react", "react-dom", "react-router"],
-          "query-vendor": ["@tanstack/react-query"],
-          "ui-vendor": ["react-select", "@fortawesome/react-fontawesome"],
-          icons: [
-            "@fortawesome/free-solid-svg-icons",
-            "@fortawesome/free-regular-svg-icons",
-            "@fortawesome/free-brands-svg-icons",
+        codeSplitting: {
+          groups: [
+            {
+              name: "react-vendor",
+              test: /node_modules[\\/](react|react-dom|react-router)/,
+            },
+            {
+              name: "query-vendor",
+              test: /node_modules[\\/]@tanstack[\\/]react-query/,
+            },
+            {
+              name: "ui-vendor",
+              test: /node_modules[\\/](react-select|@fortawesome[\\/]react-fontawesome)/,
+            },
+            {
+              name: "icons",
+              test: /node_modules[\\/]@fortawesome[\\/](free-solid-svg-icons|free-regular-svg-icons|free-brands-svg-icons)/,
+            },
           ],
         },
       },

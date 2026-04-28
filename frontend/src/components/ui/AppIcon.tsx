@@ -1,8 +1,10 @@
 import { findIconDefinition, type IconName, type IconPrefix } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon as FaIcon } from "@fortawesome/react-fontawesome";
-import { Suspense } from "react";
+import type React from "react";
+import { type ComponentType, type LazyExoticComponent, lazy, Suspense } from "react";
 
-import { lazyImport } from "@/utils/lazyImport";
+type SvgComponent = ComponentType<React.SVGProps<SVGSVGElement>>;
+
 import styles from "./AppIcon.module.scss";
 
 export type AppIconProps = {
@@ -14,7 +16,8 @@ export type AppIconProps = {
   background?: boolean;
 };
 
-const iconModules = import.meta.glob<{ default: React.ComponentType }>("/src/assets/icons/*");
+const iconModules = import.meta.glob<{ default: SvgComponent }>("/src/assets/icons/*");
+const lazyIconCache = new Map<string, LazyExoticComponent<SvgComponent>>();
 
 const FallbackSvg = (props: Omit<AppIconProps, "icon">) => {
   const size = props.size || "small";
@@ -36,12 +39,16 @@ function getCustomIcon(props: AppIconProps) {
   const suffix = `/${icon}.svg`;
   const name = Object.keys(iconModules).find((k) => k.endsWith(suffix));
   if (!name) return <FallbackSvg size={size} color={color} className={className} background={background} />;
-  const SvgComponent = lazyImport(`@/assets/icons/${icon}.svg`);
+  let SvgIcon = lazyIconCache.get(name);
+  if (!SvgIcon) {
+    SvgIcon = lazy(iconModules[name]);
+    lazyIconCache.set(name, SvgIcon);
+  }
 
   return (
     <Suspense fallback={<FallbackSvg size={size} color={color} className={className} background={background} />}>
       <div className={`${styles[size || "small"]} ${background ? styles.background : ""}`}>
-        <SvgComponent id={id} className={className} style={{ color: color }} width="100%" height="100%" />
+        <SvgIcon id={id} className={className} style={{ color: color }} width="100%" height="100%" />
       </div>
     </Suspense>
   );

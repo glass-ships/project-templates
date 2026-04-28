@@ -20,19 +20,38 @@ dependencies = [
     "loguru",
     "psutil",
     "rich",
-    "ruff",
-    ### Documentation
-    "mkdocs",
-    "mkdocs-material",
-    "mkdocstrings[python]",
-    "pytest",
+    ### API Server
+    "fastapi",
+    "uvicorn",
 ]
 
-# [project.optional-dependencies]
-# dev = ["mkdocs", "mkdocs-material", "mkdocstrings[python]", "pytest"]
+[project.optional-dependencies]
+dev = ["mkdocs", "mkdocs-material", "mkdocstrings[python]", "pytest", "ruff"]
 
 [project.scripts]
 my_app = "python_project.main:app"
+my_api = "python_project.api.main:run"
+
+[project.urls]
+Homepage = "https://gitlab.com/glass-ships/compass-bot"
+Documentation = "https://glass-ships.gitlab.io/compass-bot/"
+Repository = "https://gitlab.com/glass-ships/compass-bot"
+Issues = "https://gitlab.com/glass-ships/compass-bot/-/issues"
+
+####################
+### Build config ###
+####################
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/python_project"]
+
+############
+### Ruff ###
+############
 
 [tool.ruff]
 line-length = 120
@@ -42,25 +61,3 @@ ignore = [
     "F541", # f-strings with no placeholders
 ]
 # exclude = []
-
-[project.urls]
-Homepage = "https://gitlab.com/glass-ships/compass-bot"
-Documentation = "https://glass-ships.gitlab.io/compass-bot/"
-Repository = "https://gitlab.com/glass-ships/compass-bot"
-Issues = "https://gitlab.com/glass-ships/compass-bot/-/issues"
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/python_project"]
-
-# [tool.pixi.workspace]
-# channels = ["conda-forge"]
-# platforms = ["linux-64"]
-
-# [tool.pixi.pypi-dependencies]
-# PACKAGE_NAME = { path = ".", editable = true }
-
-# [tool.pixi.tasks]

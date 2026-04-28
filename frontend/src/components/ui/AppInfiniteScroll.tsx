@@ -33,9 +33,9 @@ export default function InfiniteScroll({ children, hasNextPage, onLoadMore, thre
   }, [hasNextPage, onLoadMore, threshold]);
 
   return (
-    <div>
+    <>
       {children}
       <div ref={containerRef} />
-    </div>
+    </>
   );
 }

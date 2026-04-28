@@ -24,11 +24,13 @@
   margin: 0;
   padding: 0;
   max-height: 80%;
-  width: min(35%, 80%);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 1.25rem;
   border-radius: v.$rounded;
+  p {
+    color: v.$off-white;
+  }
 }
