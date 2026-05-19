@@ -9,13 +9,19 @@ type InfiniteScrollProps = {
 
 export default function InfiniteScroll({ children, hasNextPage, onLoadMore, threshold = 100 }: InfiniteScrollProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasNextPageRef = useRef(hasNextPage);
+  const onLoadMoreRef = useRef(onLoadMore);
+
+  // Keep refs current on every render without re-creating the observer
+  hasNextPageRef.current = hasNextPage;
+  onLoadMoreRef.current = onLoadMore;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         const target = entries[0];
-        if (target.isIntersecting && hasNextPage) {
-          onLoadMore();
+        if (target.isIntersecting && hasNextPageRef.current) {
+          onLoadMoreRef.current();
         }
       },
       { rootMargin: `0px 0px ${threshold}px 0px` },
@@ -30,7 +36,7 @@ export default function InfiniteScroll({ children, hasNextPage, onLoadMore, thre
         observer.unobserve(currentContainer);
       }
     };
-  }, [hasNextPage, onLoadMore, threshold]);
+  }, [threshold]);
 
   return (
     <>
