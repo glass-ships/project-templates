@@ -1,6 +1,6 @@
-import { sleep } from "./debug";
+// import { sleep } from "./debug";
 
-export const api = "http://localhost:9000";
+export const api = "";
 export const prefix = "/api";
 
 /** --------------------------------------------------------------
@@ -14,18 +14,19 @@ export const requestSimple = async <Type>(url: string, parseAs: string = "json")
   if (parseAs === "text") return (await response.text()) as Type;
   else return (await response.json()) as Type;
 };
+/* --------------------------------------------------------------------------------- */
+
+/** Type for URL parameters */
+type Param = string | number | boolean | undefined | null;
+export type Params = { [key: string]: Param | Param[] };
+
+/** In-memory cache for GET requests */
+const cache = new Map<string, Response>();
 
 /** ------------------------------------------------------------------------------
  * More complex Typescript function to make GET and POST requests to the backend
  * From: https://github.com/monarch-initiative/monarch-app/
  ------------------------------------------------------------------------------*/
-type Param = string | number | boolean | undefined | null;
-export type Params = { [key: string]: Param | Param[] };
-
-/** session response cache */
-const cache = new Map<string, Response>();
-
-/** generic fetch request wrapper */
 export const request = async <Response>(
   /** API endpoint, appended to api+prefix */
   path = "",
@@ -53,7 +54,7 @@ export const request = async <Response>(
   }
 
   /** artificial delay */
-  await sleep();
+  // await sleep(); // TODO: Is this necessary?
 
   /** sort params for consistency */
   paramsObject.sort();
@@ -79,7 +80,7 @@ export const request = async <Response>(
   // const endpoint = getUrl(path, "pathname").replace(prefix, "");
 
   // if (import.meta.env.MODE !== "test")
-  console.debug(`📞 Request (${cached}) ${path}`, {
+  console.debug(`📞 Request (${cached}) ${url}`, {
     url,
     params,
     options,
@@ -135,7 +136,7 @@ export const request = async <Response>(
   }
 
   // if (import.meta.env.MODE !== "test")
-  console.debug(`📣 Response (${cached}) ${path}`, {
+  console.debug(`📣 Response (${cached}) ${url}`, {
     url,
     params,
     options,
@@ -147,7 +148,7 @@ export const request = async <Response>(
   if (error || parsed === undefined) throw Error(error);
 
   /** add response to cache */
-  if (request.method === "GET") cache.set(path, response);
+  if (request.method === "GET") cache.set(url, response);
 
   return parsed;
 };

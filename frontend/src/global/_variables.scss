@@ -52,7 +52,7 @@ $tertiary: oklch(0.86 0.13 90);
 /* Backgrounds */
 $bg-light: light-dark($white, $dark-grey);
 $bg: light-dark($off-white, $off-black);
-$bg-dark: light-dark($light-grey, $black);
+$bg-dark: light-dark($light-grey, oklch(0.26 0.05 280));
 
 /* Text Colors */
 $text: light-dark(oklch(0.15 0 264), oklch(0.96 0 264));
