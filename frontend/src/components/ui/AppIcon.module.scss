@@ -1,6 +1,10 @@
 @use "@/global/variables" as v;
 
-.appicon {  
+.defaultColor {
+  color: v.$text;
+}
+
+.appicon {
   &.tiny { height: 1em; width: 1em; }
   &.small { height: 1.5em; width: 1.5em; }
   &.medium { height: 2em; width: 2em; }

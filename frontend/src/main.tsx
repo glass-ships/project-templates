@@ -5,7 +5,6 @@ import NotFound from "@/pages/NotFound";
 import Testbed from "@/pages/Testbed";
 import TestNexus from "@/pages/TestNexus";
 import "@/global/icons"; // Ensure icons are loaded
-import TestModal from "./pages/TestModal";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -18,7 +17,6 @@ createRoot(rootElement).render(
       <Routes>
         <Route path="/" element={<Testbed />} />
         <Route path="/nexus" element={<TestNexus />} />
-        <Route path="/modal" element={<TestModal />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

@@ -104,11 +104,14 @@ code {
 }
 
 /* react-tooltip styles */
-.react-tooltip {
+body .react-tooltip {
   background-color: v.$secondary-light;
   color: v.$off-black;
+  // background-color: light-dark(v.$off-black, v.$off-white);
+  // color: light-dark(v.$light-grey, v.$dark-grey);
   border-radius: v.$rounded;
   box-shadow: v.$shadow-m;
+  --rt-opacity: 1;
 }
 
 /**------------ 
@@ -121,12 +124,6 @@ code {
   pointer-events: none;
 }
 
-.icon-primary {
-  fill: v.$light-grey;
-}
-.icon-secondary {
-  fill: v.$secondary-light;
-}
 /**---------- 
   Misc styles 
 -------------*/

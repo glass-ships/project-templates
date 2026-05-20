@@ -1,3 +1,4 @@
+import { lazy, useState } from "react";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-tooltip";
 import Navbar from "@/components/Navbar";
@@ -10,6 +11,8 @@ import AppSection from "@/components/ui/AppSection";
 import faIcons from "@/global/icons";
 import styles from "./TestBed.module.scss";
 import "@/global/styles.scss";
+
+const Modal = lazy(() => import("@/components/ui/AppModal"));
 
 // Get filenames of custom icons in /src/assets/icons
 const customIconsImport = import.meta.glob("/src/assets/icons/*.svg");
@@ -107,23 +110,30 @@ function TestText() {
 }
 
 function TestButtons() {
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleDialog = () => {
+    setIsOpen(!isOpen);
+  };
   return (
     <AppSection width="big" height="auto">
+      <Modal isOpen={isOpen} toggle={toggleDialog}>
+        <h1>Test Modal</h1>
+      </Modal>
       <AppCard>
         <h3>Test AppButtons</h3>
         <AppFlex>
           {/* normal */}
           <AppFlex direction="row">
-            <AppButton text="Button 1" color="primary" onClick={() => toast.success("Button 1 clicked")} />
+            <AppButton text="Toast Success" color="primary" onClick={() => toast.success("Button 1 clicked")} />
             <AppButton
-              text="Button 2"
+              text="Toast Error"
               color="secondary"
               icon="vial"
               iconPosition="left"
               onClick={() => toast.error("Button 2 clicked")}
             />
-            <AppButton type="link" text="Button 3" icon="vial" color="tertiary" linkTo="/testbed" />
-            <AppButton text="Button 4" icon="vial" color="none" linkTo="/" />
+            <AppButton type="link" text="Broken link" icon="vial" color="tertiary" linkTo="/doesnotexist" />
+            <AppButton text="Test modal" icon="vial" color="none" onClick={() => setIsOpen(true)} />
             <AppButton icon="vial" iconColor="white" onClick={() => console.log("Button 5 clicked")} />
           </AppFlex>
           {/* circle */}
@@ -138,13 +148,13 @@ function TestButtons() {
               onClick={() => console.log("Icon clicked")}
             />
             <AppButton
-              text="Circle 3"
+              text="Link to nexus"
               color="tertiary"
               design="circle"
               icon="vial"
-              onClick={() => console.log("Icon clicked")}
+              linkTo="/nexus"
             />
-            <AppButton icon="vial" text="Circle 4" color="none" design="circle" linkTo="/testbed" />
+            <AppButton icon="vial" text="Broken link" color="none" design="circle" linkTo="/doesnotexist" />
             <AppButton design="circle" icon="vial" iconColor="white" />
           </AppFlex>
           {/* small */}
@@ -163,7 +173,7 @@ function TestButtons() {
               icon="vial"
               onClick={() => console.log("Sm button 3 clicked")}
             />
-            <AppButton text="Small 4" icon="vial" color="none" design="small" linkTo="/testbed" />
+            <AppButton text="Small 4" icon="vial" color="none" design="small" linkTo="/doesnotexist" />
             <AppButton design="small" icon="vial" iconColor="white" />
           </AppFlex>
         </AppFlex>
@@ -222,9 +232,9 @@ function TestTooltips() {
       </AppFlex>
 
       <AppFlex>
-        <Tooltip content="Icon with a tooltip" anchorSelect="#tooltip-icon" />
+        <Tooltip content="FA icon with tooltip" anchorSelect="#tooltip-icon" />
         <AppIcon icon="vial" id="tooltip-icon" />
-        <Tooltip content="Custom icon with a tooltip" anchorSelect="#custom-tooltip-icon" />
+        <Tooltip content="Custom icon with tooltip" anchorSelect="#custom-tooltip-icon" />
         <AppIcon icon="logo" id="custom-tooltip-icon" />
       </AppFlex>
 
