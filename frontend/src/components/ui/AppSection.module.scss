@@ -19,7 +19,10 @@
   
   // Height of the section
   &.hFull { min-height: 100dvh; }
-  &.hAuto { min-height: auto; }
+  &.hAuto {
+    min-height: auto;
+    justify-content: flex-start; // Align children to the top of the section
+  }
   // .hBig { min-height: 75vh; }
   // .hMedium {  }
 }

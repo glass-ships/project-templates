@@ -104,6 +104,12 @@ function TestText() {
           pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
           est laborum.
         </code>
+        <pre>
+          {`function example() {
+            console.log("This is a code block with a long line that should trigger horizontal scrolling.");
+            return true;
+          }`}
+        </pre>
       </AppCard>
     </AppSection>
   );

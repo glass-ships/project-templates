@@ -86,6 +86,21 @@ code {
   color: v.$text-muted;
   max-width: 80ch;
 }
+pre {
+  font-size: clamp(v.$fs-tiny, -0.8rem + 4vw, v.$fs-medium);
+  font-weight: v.$normal;
+  font-family: v.$mono;
+  color: v.$grey;
+  background: v.$black;
+  padding: 1rem;
+  // border: 1px solid v.$tertiary;
+  border-radius: v.$rounded;
+  box-shadow: v.$shadow;
+  max-width: 90%;
+  overflow-x: auto;
+  text-align: left;
+  align-self: center;
+}
 
 ::selection {
   background-color: v.$select-bg;
