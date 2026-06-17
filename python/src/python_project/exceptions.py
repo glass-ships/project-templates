@@ -1,9 +1,9 @@
 """Custom exceptions for PROJECT_NAME"""
 
-class PROJECT_NAMEBaseException:
+class _BaseException(BaseException):
     """Base class for PROJECT_NAME exceptions"""
 
-class CustomException(PROJECT_NAMEBaseException):
+class CustomException(_BaseException):
     """Generic custom exception class
 
     Usage:

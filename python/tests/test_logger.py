@@ -1,10 +1,8 @@
-import os
 import logging
+import os
 from pathlib import Path
 
-# import pytest
-
-from python_project.utils.logging import add_log_fh, get_logger, set_log_config
+from python_project.utils.logging import add_log_fh, get_logger, open_log_fh, remove_log_fh, set_log_config
 
 
 def test_logger():
@@ -26,4 +24,40 @@ def test_logger():
     logger.info("Test log message")
     assert logger.handlers[1].baseFilename == str(Path(logfile).absolute())
 
+    removed = remove_log_fh(logger, logfile)
+    assert removed == 1
+    assert len(logger.handlers) == 1
+    os.remove(logfile)
+
+
+def test_open_log_fh_context_manager():
+    logger = get_logger("test_logger_context")
+    logfile = "test_context.log"
+
+    with open_log_fh(logger, logfile) as handler:
+        logger.info("test context message")
+        assert handler in logger.handlers
+
+    assert all(not isinstance(h, logging.FileHandler) for h in logger.handlers)
+    assert os.path.exists(logfile)
+    os.remove(logfile)
+
+
+def test_add_log_fh_append_mode():
+    logger = get_logger("test_logger_append")
+    logfile = "test_append.log"
+
+    add_log_fh(logger, logfile, mode="w")
+    logger.info("first line")
+    remove_log_fh(logger, logfile)
+
+    add_log_fh(logger, logfile, mode="a")
+    logger.info("second line")
+    remove_log_fh(logger, logfile)
+
+    with open(logfile, encoding="utf-8") as f:
+        content = f.read()
+
+    assert "first line" in content
+    assert "second line" in content
     os.remove(logfile)
