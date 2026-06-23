@@ -1,4 +1,5 @@
 import sys
+from typing import Union
 
 import loguru
 
@@ -13,12 +14,12 @@ LOGURU_FORMAT = " ".join(
 LOGURU_FORMAT_SIMPLE = "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name: <16} | {message}"
 
 
-def get_logger(filename: str | None = None, verbose: bool = False):
+def get_logger(filename: str | None = None, level: Union[str, int] = "INFO"):
     logger = loguru.logger
     logger.remove()
     logger.add(
         sink=sys.stderr,
-        level="INFO" if (verbose is None) else "DEBUG" if (verbose is True) else "WARNING",
+        level=level,
         format=LOGURU_FORMAT,
         colorize=True,
     )
@@ -26,7 +27,7 @@ def get_logger(filename: str | None = None, verbose: bool = False):
         fp = f"logs/{filename}"
         logger.add(
             sink=fp + "_{time:YYYYMMDD_HHmmss}.log",
-            level="DEBUG",
+            level=level,
             format=LOGURU_FORMAT_SIMPLE,
         )
     return logger
