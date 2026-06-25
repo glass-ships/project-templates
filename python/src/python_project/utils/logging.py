@@ -2,7 +2,7 @@ import logging
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterator, Literal, Optional, Union
+from typing import Iterator, Literal, Union
 
 FORMAT = "%(asctime)s | %(levelname)-4s | %(name)-8s | %(message)s"
 DATEFMT = "%Y-%m-%d %H:%M:%S"

@@ -5,12 +5,9 @@ from typing import Optional
 import typer
 
 from python_project.utils.logging import get_logger
-from python_project.utils.logging_loguru import get_logger as get_loguru_logger
-
 
 app = typer.Typer()
 logger = get_logger("main", level="DEBUG")
-loguru_logger = get_loguru_logger("main", level="DEBUG")
 
 
 class CustomHelpTyper(typer.Typer):
@@ -47,13 +44,12 @@ def custom_exception():
         logger.error(f"Caught CustomException with custom_kwarg={exc.custom_kwarg}")
 
 
-@app.command("loguru_exception")
-def loguru_exception():
-    try:
-        int("a")
-    except BaseException:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        loguru_logger.error(
-            f"Oh no! Something went wrong:\n\t[{fname}:{exc_tb.tb_lineno}] {exc_type.__name__}: {exc_obj}"
-        )
+@app.command("deprecated")
+def deprecated():
+    from python_project.utils.deprecated import deprecated as deprecated_decorator
+
+    @deprecated_decorator("This function is deprecated. Use another_function instead.")
+    def old_function():
+        return "This is the old function."
+
+    typer.echo(old_function())
