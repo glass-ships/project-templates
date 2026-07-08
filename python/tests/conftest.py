@@ -5,6 +5,7 @@ from glob import glob
 def _as_module(fixture_path: str) -> str:
     return fixture_path.replace("/", ".").replace("\\", ".").replace(".py", "")
 
+
 fixtures_dir = "tests/fixtures"
 # if os.getcwd().endswith("monarch-app"):
 #     fixtures_dir = "backend/tests/fixtures"
