@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "allowJs": true,
+    // "allowJs": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
     "target": "esnext",
