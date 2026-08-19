@@ -1,9 +1,9 @@
 import os
 import sys
-from typing import Optional
 
 import typer
 
+from python_project.exceptions import CustomException, _BaseException
 from python_project.utils.logging import get_logger
 
 app = typer.Typer()
@@ -16,7 +16,7 @@ class CustomHelpTyper(typer.Typer):
 
 
 @app.callback(invoke_without_command=True)
-def callback(version: Optional[bool] = typer.Option(None, "--version", is_eager=True)):
+def callback(version: bool | None = typer.Option(None, "--version", is_eager=True)):
     if version:
         from python_project import __version__
 
@@ -28,7 +28,7 @@ def callback(version: Optional[bool] = typer.Option(None, "--version", is_eager=
 def log_exception():
     try:
         int("a")
-    except BaseException:
+    except _BaseException:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         logger.error(f"Oh no! Something went wrong:\n\t[{fname}:{exc_tb.tb_lineno}] {exc_type.__name__}: {exc_obj}")
@@ -36,8 +36,6 @@ def log_exception():
 
 @app.command("custom_exception")
 def custom_exception():
-    from python_project.exceptions import CustomException
-
     try:
         raise CustomException("Something bad happened", custom_kwarg="some_value")
     except CustomException as exc:

@@ -17,3 +17,9 @@ class CustomException(_BaseException):
     def __init__(self, *args, **kwargs):
         super().__init__(*args)
         self.custom_kwarg = kwargs.get('custom_kwarg')
+
+class AnotherCustomException(CustomException):
+    """Another custom exception class"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.another_custom_kwarg = kwargs.get('another_custom_kwarg')
