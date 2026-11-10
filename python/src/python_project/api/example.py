@@ -3,12 +3,14 @@ from contextlib import asynccontextmanager
 
 from fastapi import APIRouter
 
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app):
-    logging.info("Performing system startup tasks.")
+    logger.info("Performing system startup tasks.")
     yield
-    logging.info("Server shutting down.")
+    logger.info("Server shutting down.")
 
 
 router = APIRouter(lifespan=lifespan, tags=["files"], responses={404: {"description": "Not Found"}})

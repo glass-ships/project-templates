@@ -1,14 +1,19 @@
+import logging
 import os
 import sys
 
 import typer
 
 from python_project.exceptions import CustomException, _BaseException
-from python_project.utils.logging import get_logger
+from python_project.utils.logging_alt import setup_logging
+
+# from python_project.utils.logging import get_logger
+
 
 app = typer.Typer()
-logger = get_logger("main", level="DEBUG")
-
+setup_logging(level="DEBUG")
+logger = logging.getLogger(__name__)
+# logger = get_logger("main", level="DEBUG")
 
 class CustomHelpTyper(typer.Typer):
     def get_help_option_names(self) -> tuple[str, ...]:
@@ -23,6 +28,14 @@ def callback(version: bool | None = typer.Option(None, "--version", is_eager=Tru
         typer.echo(f"python_project {__version__}")
         raise typer.Exit()
 
+
+@app.command("logger")
+def logger_command():
+    logger.debug("This is a debug message.")
+    logger.info("This is an info message.")
+    logger.warning("This is a warning message.")
+    logger.error("This is an error message.")
+    logger.critical("This is a critical message.")
 
 @app.command("log_exception")
 def log_exception():

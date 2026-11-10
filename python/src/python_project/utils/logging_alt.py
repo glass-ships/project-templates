@@ -1,14 +1,30 @@
 """
 Custom logging setup for PROJECT_NAME with optional log rotation and enhanced formatting.
 Configures the root logger to log to both console and a rotating file, with a custom format that includes timestamps, log levels, and source modules.
+
+Usage:
+```python
+# __init__.py or main.py
+from python_project.utils.logging_alt import setup_logging
+setup_logging(level="DEBUG", rotate=True)
+```
+
+Then use the standard logging module to log messages:
+```python
+# in any module
+import logging
+logger = logging.getLogger(__name__)
+logger.info("This is an info message.")
+```
 """
 
 import logging
 import logging.handlers
 import os
 import sys
+from collections.abc import Iterator
 from contextlib import contextmanager
-from typing import Iterator, Literal
+from typing import Literal
 
 
 class OriginFormatter(logging.Formatter):
