@@ -1,11 +1,11 @@
 import logging
 import logging.handlers
-import os
 import re
+from pathlib import Path
 
 import pytest
 
-from python_project.utils.logging_alt import (
+from python_project.utils.logging import (
     LOG_FMT,
     add_log_fh,
     log_to_file,
@@ -44,11 +44,11 @@ def isolate_root_logger(monkeypatch, tmp_path):
 
 
 def _file_handlers(path) -> list[logging.FileHandler]:
-    resolved = os.path.abspath(path)
+    resolved = Path(path).resolve()
     return [
         h
         for h in logging.getLogger().handlers
-        if isinstance(h, logging.FileHandler) and os.path.abspath(h.baseFilename) == resolved
+        if isinstance(h, logging.FileHandler) and Path(h.baseFilename).resolve() == resolved
     ]
 
 
@@ -91,7 +91,7 @@ def test_setup_logging_rotate_adds_timed_rotating_handler(tmp_path):
     handler = rotating[0]
     assert handler.backupCount == 3
     assert handler.when == "MIDNIGHT"
-    assert os.path.abspath(handler.baseFilename) == os.path.abspath(tmp_path / "PROJECT_NAME.log")
+    assert Path(handler.baseFilename).resolve() == (tmp_path / "PROJECT_NAME.log").resolve()
 
 
 def test_setup_logging_level_filters_output(capsys):
@@ -99,7 +99,7 @@ def test_setup_logging_level_filters_output(capsys):
 
     root = logging.getLogger()
     assert root.level == logging.WARNING
-    assert all(h.level == logging.WARNING for h in _stream_handlers())
+    assert all(h.level == logging.NOTSET for h in _stream_handlers())
 
     root.info("hidden info message")
     root.warning("visible warning message")
@@ -107,6 +107,33 @@ def test_setup_logging_level_filters_output(capsys):
     out = capsys.readouterr().out
     assert "hidden info message" not in out
     assert "visible warning message" in out
+
+
+def test_setup_logging_logger_levels_override_root(capsys):
+    setup_logging(level="WARNING", rotate=False, logger_levels={"noisy": "ERROR", "mine": logging.DEBUG})
+
+    assert logging.getLogger("noisy").level == logging.ERROR
+    assert logging.getLogger("mine").level == logging.DEBUG
+
+    logging.getLogger("noisy").warning("hidden noisy warning")
+    logging.getLogger("mine").debug("visible debug message")
+    logging.getLogger("other").info("hidden other info")
+
+    out = capsys.readouterr().out
+    assert "hidden noisy warning" not in out
+    assert "visible debug message" in out
+    assert "hidden other info" not in out
+
+
+def test_setup_logging_reports_unwritable_rotating_file(monkeypatch, tmp_path, capsys):
+    monkeypatch.setattr(Path, "home", lambda: tmp_path / "missing_dir")
+
+    setup_logging(rotate=True)
+
+    rotating = [h for h in logging.getLogger().handlers if isinstance(h, logging.handlers.TimedRotatingFileHandler)]
+    assert rotating == []
+    assert len(_stream_handlers()) == 1
+    assert "Failed to create log file handler" in capsys.readouterr().out
 
 
 # --------------------------------------------------------------------------- #
@@ -196,7 +223,8 @@ def test_remove_log_fh_only_removes_matching_handler(tmp_path):
     keep = add_log_fh(str(tmp_path / "keep.log"))
     drop = add_log_fh(str(tmp_path / "drop.log"))
 
-    remove_log_fh(str(tmp_path / "drop.log"))
+    assert remove_log_fh(str(tmp_path / "drop.log")) == 1
+    assert remove_log_fh(str(tmp_path / "drop.log")) == 0
 
     handlers = logging.getLogger().handlers
     assert keep in handlers
@@ -214,9 +242,9 @@ def test_log_to_file_adds_and_removes_file_handler(tmp_path):
     setup_logging(rotate=False)
     logfile = tmp_path / "logging_alt_context.log"
 
-    with log_to_file(str(logfile)):
+    with log_to_file(str(logfile)) as handler:
         logging.getLogger().info("message written in context")
-        assert len(_file_handlers(logfile)) == 1
+        assert _file_handlers(logfile) == [handler]
 
     assert _file_handlers(logfile) == []
     assert "message written in context" in logfile.read_text(encoding="utf-8")

@@ -1,19 +1,15 @@
 import logging
-import os
 import sys
+from pathlib import Path
 
 import typer
 
-from python_project.exceptions import CustomException, _BaseException
-from python_project.utils.logging_alt import setup_logging
-
-# from python_project.utils.logging import get_logger
-
+from python_project.exceptions import CustomException
+from python_project.utils.logging import setup_logging
 
 app = typer.Typer()
 setup_logging(level="DEBUG")
 logger = logging.getLogger(__name__)
-# logger = get_logger("main", level="DEBUG")
 
 class CustomHelpTyper(typer.Typer):
     def get_help_option_names(self) -> tuple[str, ...]:
@@ -41,9 +37,9 @@ def logger_command():
 def log_exception():
     try:
         int("a")
-    except _BaseException:
+    except ValueError:
         exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        fname = Path(exc_tb.tb_frame.f_code.co_filename).name
         logger.error(f"Oh no! Something went wrong:\n\t[{fname}:{exc_tb.tb_lineno}] {exc_type.__name__}: {exc_obj}")
 
 

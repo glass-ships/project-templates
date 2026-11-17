@@ -1,0 +1,87 @@
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+import AppButton from "@/components/ui/AppButton";
+import styles from "@/components/ui/AppButton.module.scss";
+import "@/global/icons";
+
+describe("AppButton", () => {
+  it("renders a button with its text and default styles", () => {
+    render(<AppButton text="Save" />);
+
+    const button = screen.getByRole("button", { name: "Save" });
+    expect(button).toHaveAttribute("type", "button");
+    expect(button).toHaveClass(styles.button, styles.primary, styles.normal, styles.text);
+  });
+
+  it("applies color and design styles", () => {
+    render(<AppButton text="Delete" color="secondary" design="small" />);
+    expect(screen.getByRole("button")).toHaveClass(styles.secondary, styles.small);
+  });
+
+  it("calls onClick when clicked", async () => {
+    const onClick = vi.fn();
+    render(<AppButton text="Save" onClick={onClick} />);
+
+    await userEvent.click(screen.getByRole("button"));
+
+    expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it("calls onKeyDown on key presses", async () => {
+    const onKeyDown = vi.fn();
+    render(<AppButton text="Save" onKeyDown={onKeyDown} />);
+
+    screen.getByRole("button").focus();
+    await userEvent.keyboard("{Enter}");
+
+    expect(onKeyDown).toHaveBeenCalledWith(expect.objectContaining({ key: "Enter" }));
+  });
+
+  it("renders a link when given linkTo", () => {
+    render(<AppButton text="Docs" linkTo="/docs" />);
+
+    const link = screen.getByRole("link", { name: "Docs" });
+    expect(link).toHaveAttribute("href", "/docs");
+    expect(link).toHaveAttribute("target", "_self");
+  });
+
+  it("opens links in a new tab when newTab is set", () => {
+    render(<AppButton text="Docs" type="link" linkTo="https://example.com" newTab />);
+    expect(screen.getByRole("link")).toHaveAttribute("target", "_blank");
+  });
+
+  it("submits its form when type is submit", async () => {
+    const onSubmit = vi.fn((event: React.FormEvent) => event.preventDefault());
+    render(
+      <form onSubmit={onSubmit}>
+        <AppButton text="Send" type="submit" />
+      </form>,
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: "Send" }));
+
+    expect(screen.getByRole("button")).toHaveAttribute("type", "submit");
+    expect(onSubmit).toHaveBeenCalledOnce();
+  });
+
+  it("places the icon after the text by default and before it when iconPosition is left", () => {
+    const { rerender } = render(<AppButton text="Next" icon="angle-right" />);
+    let [first, second] = screen.getByRole("button").children;
+    expect(first).toHaveTextContent("Next");
+    expect(second.querySelector('svg[data-icon="angle-right"]')).not.toBeNull();
+
+    rerender(<AppButton text="Next" icon="angle-right" iconPosition="left" />);
+    [first, second] = screen.getByRole("button").children;
+    expect(first.querySelector('svg[data-icon="angle-right"]')).not.toBeNull();
+    expect(second).toHaveTextContent("Next");
+  });
+
+  it("renders an icon-only button", () => {
+    render(<AppButton icon="bars" />);
+
+    const button = screen.getByRole("button");
+    expect(button.querySelector('svg[data-icon="bars"]')).not.toBeNull();
+    expect(button).not.toHaveClass(styles.text);
+  });
+});
