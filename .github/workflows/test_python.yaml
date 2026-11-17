@@ -27,7 +27,7 @@ jobs:
       UV_PYTHON: ${{ matrix.python-version }}
 
     steps:
-      - uses: actions/checkout@vmain
+      - uses: actions/checkout@main
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@main
