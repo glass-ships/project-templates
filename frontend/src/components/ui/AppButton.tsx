@@ -7,14 +7,14 @@
 import type React from "react";
 import styles from "./AppButton.module.scss";
 import AppIcon, { type AppIconProps } from "./AppIcon";
+
 // import { copyToClipboard } from "@/utils/string";
 
-export interface AppButtonProps {
+interface AppButtonBaseProps {
   id?: string;
   color?: "primary" | "secondary" | "tertiary" | "none";
   design?: "normal" | "circle" | "small";
   type?: "button" | "link" | "submit";
-  text?: string;
   icon?: string;
   iconColor?: string;
   iconPosition?: "left" | "right";
@@ -24,12 +24,20 @@ export interface AppButtonProps {
   onKeyDown?: (event: React.KeyboardEvent<HTMLButtonElement>) => void;
 }
 
+/**
+ * Needs visible `text`, an `ariaLabel`, or both, so the button always has an accessible name.
+ * An `ariaLabel` replaces `text` as the accessible name; if you pass both, include the text in the label.
+ */
+export type AppButtonProps = AppButtonBaseProps &
+  ({ text: string; ariaLabel?: string } | { text?: string; ariaLabel: string });
+
 export default function AppButton({
   id = "",
   color = "primary",
   design = "normal",
   type = "button",
   text = "",
+  ariaLabel,
   icon = "",
   iconColor,
   iconPosition = "right",
@@ -55,19 +63,26 @@ export default function AppButton({
 
   if (type === "link" || linkTo !== "") {
     return (
-      <a id={id} href={linkTo} target={newTab ? "_blank" : "_self"} className={buttonClass}>
+      <a id={id} href={linkTo} target={newTab ? "_blank" : "_self"} aria-label={ariaLabel} className={buttonClass}>
         {content}
       </a>
     );
   } else if (type === "button") {
     return (
-      <button id={id} type="button" onClick={onClick} onKeyDown={onKeyDown} className={buttonClass}>
+      <button
+        id={id}
+        type="button"
+        onClick={onClick}
+        onKeyDown={onKeyDown}
+        aria-label={ariaLabel}
+        className={buttonClass}
+      >
         {content}
       </button>
     );
   } else if (type === "submit") {
     return (
-      <button id={id} type="submit" className={buttonClass}>
+      <button id={id} type="submit" aria-label={ariaLabel} className={buttonClass}>
         {content}
       </button>
     );

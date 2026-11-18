@@ -29,15 +29,28 @@ test.describe("Testbed (/)", () => {
     await expect(dialog).toBeHidden();
   });
 
-  // KNOWN BUG: body overflow isn't reset when AppModal closes (see tests/unit/components/AppModal.test.tsx).
-  // Remove `.fail` once AppModal.tsx is fixed.
-  test.fail("lets the page scroll again after the modal closes", async ({ page }) => {
+  test("lets the page scroll again after the modal closes", async ({ page }) => {
     await page.getByRole("button", { name: "Test modal" }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page.getByRole("dialog")).toBeHidden();
 
     await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden", { timeout: 1_000 });
+  });
+
+  test("keeps a locked modal open on Escape and backdrop clicks", async ({ page }) => {
+    await page.getByRole("button", { name: "Test locked modal" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByRole("heading", { name: "Locked Modal" })).toBeVisible();
+
+    // Press twice: Chrome force-closes a dialog on a repeated Escape if it only cancelled the first one
+    await page.keyboard.press("Escape");
+    await page.keyboard.press("Escape");
+    await page.mouse.click(5, 5); // backdrop
+    await expect(dialog).toBeVisible();
+
+    await dialog.getByRole("button", { name: "Close" }).click();
+    await expect(dialog).toBeHidden();
   });
 
   test("links to the nexus page", async ({ page }) => {

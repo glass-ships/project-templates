@@ -49,13 +49,14 @@ const AppBackToTopButton: React.FC<AppBackToTopButtonProps> = ({
   };
 
   return (
-    <div className="to-top" style={{ display: show ? "flex" : "none" }} role="note" aria-label={ariaLabel}>
+    <div className="to-top" style={{ display: show ? "flex" : "none" }}>
       <Tooltip content={ariaLabel} anchorSelect="#back-to-top-button" place="left" />
       <AppButton
         id="back-to-top-button"
         design="circle"
         color="primary"
         text={label ? label : undefined}
+        ariaLabel={ariaLabel}
         icon="angles-up"
         onClick={scrollTop}
       />

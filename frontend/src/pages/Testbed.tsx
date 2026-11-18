@@ -117,6 +117,7 @@ function TestText() {
 
 function TestButtons() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLockedOpen, setIsLockedOpen] = useState(false);
   const toggleDialog = () => {
     setIsOpen(!isOpen);
   };
@@ -124,6 +125,11 @@ function TestButtons() {
     <AppSection width="big" height="auto">
       <Modal isOpen={isOpen} toggle={toggleDialog}>
         <h1>Test Modal</h1>
+      </Modal>
+      {/* Escape and backdrop clicks do nothing; only the Close button closes it */}
+      <Modal isOpen={isLockedOpen} toggle={() => {}}>
+        <h1>Locked Modal</h1>
+        <AppButton text="Close" color="primary" onClick={() => setIsLockedOpen(false)} />
       </Modal>
       <AppCard>
         <h3>Test AppButtons</h3>
@@ -140,7 +146,13 @@ function TestButtons() {
             />
             <AppButton type="link" text="Broken link" icon="vial" color="tertiary" linkTo="/doesnotexist" />
             <AppButton text="Test modal" icon="vial" color="none" onClick={() => setIsOpen(true)} />
-            <AppButton icon="vial" iconColor="white" onClick={() => console.log("Button 5 clicked")} />
+            <AppButton text="Test locked modal" icon="vial" color="none" onClick={() => setIsLockedOpen(true)} />
+            <AppButton
+              icon="vial"
+              iconColor="white"
+              ariaLabel="Icon button"
+              onClick={() => console.log("Button 5 clicked")}
+            />
           </AppFlex>
           {/* circle */}
           <AppFlex>
@@ -155,7 +167,7 @@ function TestButtons() {
             />
             <AppButton text="Link to nexus" color="tertiary" design="circle" icon="vial" linkTo="/nexus" />
             <AppButton icon="vial" text="Broken link" color="none" design="circle" linkTo="/doesnotexist" />
-            <AppButton design="circle" icon="vial" iconColor="white" />
+            <AppButton design="circle" icon="vial" iconColor="white" ariaLabel="Circle icon button" />
           </AppFlex>
           {/* small */}
           <AppFlex>
@@ -174,7 +186,7 @@ function TestButtons() {
               onClick={() => console.log("Sm button 3 clicked")}
             />
             <AppButton text="Small 4" icon="vial" color="none" design="small" linkTo="/doesnotexist" />
-            <AppButton design="small" icon="vial" iconColor="white" />
+            <AppButton design="small" icon="vial" iconColor="white" ariaLabel="Small icon button" />
           </AppFlex>
         </AppFlex>
       </AppCard>
@@ -225,10 +237,10 @@ function TestTooltips() {
           anchorSelect="#tooltip-bottom"
           place="bottom"
         />
-        <AppButton design="circle" icon="vial" color="primary" id="tooltip-bottom" />
+        <AppButton design="circle" icon="vial" color="primary" id="tooltip-bottom" ariaLabel="Tooltip Bottom" />
 
         <Tooltip content="Tooltip content" place="right" anchorSelect="#tooltip-right" />
-        <AppButton design="small" icon="vial" color="primary" id="tooltip-right" />
+        <AppButton design="small" icon="vial" color="primary" id="tooltip-right" ariaLabel="Tooltip Right" />
       </AppFlex>
 
       <AppFlex>

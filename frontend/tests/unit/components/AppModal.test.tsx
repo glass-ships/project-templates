@@ -6,14 +6,22 @@ const getDialog = () => document.querySelector("dialog") as HTMLDialogElement;
 
 describe("AppModal", () => {
   it("renders nothing when closed", () => {
-    render(<AppModal isOpen={false}>content</AppModal>);
+    render(
+      <AppModal isOpen={false} toggle={vi.fn()}>
+        content
+      </AppModal>,
+    );
 
     expect(getDialog()).toBeNull();
     expect(screen.queryByText("content")).toBeNull();
   });
 
   it("opens a modal dialog with its children and locks page scroll", () => {
-    render(<AppModal isOpen>content</AppModal>);
+    render(
+      <AppModal isOpen toggle={vi.fn()}>
+        content
+      </AppModal>,
+    );
 
     expect(getDialog().open).toBe(true);
     expect(screen.getByText("content")).toBeInTheDocument();
@@ -51,7 +59,7 @@ describe("AppModal", () => {
   it("forwards key presses to onKeyDown", () => {
     const onKeyDown = vi.fn();
     render(
-      <AppModal isOpen onKeyDown={onKeyDown}>
+      <AppModal isOpen toggle={vi.fn()} onKeyDown={onKeyDown}>
         content
       </AppModal>,
     );
@@ -61,13 +69,18 @@ describe("AppModal", () => {
     expect(onKeyDown).toHaveBeenCalledWith(expect.objectContaining({ key: "a" }));
   });
 
-  it("closes the dialog itself on Escape when no toggle is given", () => {
-    render(<AppModal isOpen>content</AppModal>);
+  it("stops the browser from closing the dialog on its own", () => {
+    render(
+      <AppModal isOpen toggle={vi.fn()}>
+        content
+      </AppModal>,
+    );
 
-    fireEvent.keyDown(document, { key: "Escape" });
+    const cancel = new Event("cancel", { cancelable: true });
+    getDialog().dispatchEvent(cancel);
 
-    expect(getDialog().open).toBe(false);
-    expect(document.body.style.overflow).toBe("");
+    expect(cancel.defaultPrevented).toBe(true);
+    expect(getDialog().open).toBe(true);
   });
 
   it("stops listening for keys once closed", () => {
@@ -89,18 +102,28 @@ describe("AppModal", () => {
     expect(toggle).not.toHaveBeenCalled();
   });
 
-  // KNOWN BUG: AppModal returns null when closed, so modalRef is already null when its effect
-  // runs and body overflow is never reset. Remove `.fails` once AppModal.tsx is fixed.
-  it.fails("unlocks page scroll when closed", () => {
-    const { rerender } = render(<AppModal isOpen>content</AppModal>);
+  it("unlocks page scroll when closed", () => {
+    const { rerender } = render(
+      <AppModal isOpen toggle={vi.fn()}>
+        content
+      </AppModal>,
+    );
 
-    rerender(<AppModal isOpen={false}>content</AppModal>);
+    rerender(
+      <AppModal isOpen={false} toggle={vi.fn()}>
+        content
+      </AppModal>,
+    );
 
     expect(document.body.style.overflow).toBe("");
   });
 
   it("unlocks page scroll on unmount", () => {
-    const { unmount } = render(<AppModal isOpen>content</AppModal>);
+    const { unmount } = render(
+      <AppModal isOpen toggle={vi.fn()}>
+        content
+      </AppModal>,
+    );
 
     unmount();
 

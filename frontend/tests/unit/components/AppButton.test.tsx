@@ -46,6 +46,11 @@ describe("AppButton", () => {
     expect(link).toHaveAttribute("target", "_self");
   });
 
+  it("puts ariaLabel on links too", () => {
+    render(<AppButton icon="code" ariaLabel="Source code" linkTo="/source" />);
+    expect(screen.getByRole("link", { name: "Source code" })).toHaveAttribute("href", "/source");
+  });
+
   it("opens links in a new tab when newTab is set", () => {
     render(<AppButton text="Docs" type="link" linkTo="https://example.com" newTab />);
     expect(screen.getByRole("link")).toHaveAttribute("target", "_blank");
@@ -77,10 +82,10 @@ describe("AppButton", () => {
     expect(second).toHaveTextContent("Next");
   });
 
-  it("renders an icon-only button", () => {
-    render(<AppButton icon="bars" />);
+  it("renders an icon-only button named by ariaLabel", () => {
+    render(<AppButton icon="bars" ariaLabel="Menu" />);
 
-    const button = screen.getByRole("button");
+    const button = screen.getByRole("button", { name: "Menu" });
     expect(button.querySelector('svg[data-icon="bars"]')).not.toBeNull();
     expect(button).not.toHaveClass(styles.text);
   });

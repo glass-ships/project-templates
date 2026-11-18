@@ -7,8 +7,6 @@ import { expect, setTheme, test } from "./fixtures";
  * fixed so the rule is enforced again. Moderate/minor rules aren't enforced yet.
  */
 const TESTBED: Record<string, string> = {
-  // TODO: icon-only AppButtons have no accessible name; AppButton needs an aria-label prop
-  "button-name": "icon-only AppButton",
   // TODO: AppButton text (primary/secondary/none) and the color swatch labels fail contrast in both themes
   "color-contrast": "AppButton text, color swatch labels",
   // TODO: the <pre> code sample scrolls horizontally but isn't keyboard focusable (needs tabindex="0")
