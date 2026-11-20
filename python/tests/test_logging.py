@@ -125,8 +125,22 @@ def test_setup_logging_logger_levels_override_root(capsys):
     assert "hidden other info" not in out
 
 
+def test_setup_logging_creates_missing_log_dirs(tmp_path):
+    log_file = tmp_path / "missing" / "nested" / "app.log"
+
+    setup_logging(rotate=True, log_file=log_file)
+
+    rotating = [h for h in logging.getLogger().handlers if isinstance(h, logging.handlers.TimedRotatingFileHandler)]
+    assert len(rotating) == 1
+    assert Path(rotating[0].baseFilename) == log_file
+    assert log_file.parent.is_dir()
+
+
 def test_setup_logging_reports_unwritable_rotating_file(monkeypatch, tmp_path, capsys):
-    monkeypatch.setattr(Path, "home", lambda: tmp_path / "missing_dir")
+    # A regular file where the log directory should be, so it can't be created
+    blocker = tmp_path / "not_a_dir"
+    blocker.write_text("")
+    monkeypatch.setattr(Path, "home", lambda: blocker)
 
     setup_logging(rotate=True)
 
@@ -149,12 +163,12 @@ def test_origin_formatter_uses_module_for_root_logger():
 
 def test_file_output_matches_log_format(tmp_path):
     setup_logging(rotate=False)
-    logfile = tmp_path / "format.log"
-    add_log_fh(str(logfile))
+    log_file = tmp_path / "format.log"
+    add_log_fh(str(log_file))
 
     logging.getLogger("my.logger").info("formatted message")
 
-    line = logfile.read_text(encoding="utf-8").strip()
+    line = log_file.read_text(encoding="utf-8").strip()
     assert re.fullmatch(
         r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} \| INFO \| my\.logger\s+ \| formatted message",
         line,
@@ -167,13 +181,13 @@ def test_add_log_fh_works_without_prior_setup(tmp_path):
     for handler in root.handlers[:]:
         root.removeHandler(handler)
     root.setLevel(logging.INFO)
-    logfile = tmp_path / "no_setup.log"
+    log_file = tmp_path / "no_setup.log"
 
-    handler = add_log_fh(str(logfile))
+    handler = add_log_fh(str(log_file))
     root.info("no setup message")
 
     assert handler.formatter is LOG_FMT
-    assert "no setup message" in logfile.read_text(encoding="utf-8")
+    assert "no setup message" in log_file.read_text(encoding="utf-8")
 
 
 # --------------------------------------------------------------------------- #
@@ -182,12 +196,12 @@ def test_add_log_fh_works_without_prior_setup(tmp_path):
 
 
 def test_add_log_fh_replaces_existing_handler_for_same_file(tmp_path):
-    logfile = tmp_path / "replace.log"
+    log_file = tmp_path / "replace.log"
 
-    first = add_log_fh(str(logfile))
-    second = add_log_fh(str(logfile))
+    first = add_log_fh(str(log_file))
+    second = add_log_fh(str(log_file))
 
-    assert _file_handlers(logfile) == [second]
+    assert _file_handlers(log_file) == [second]
     assert first is not second
     assert first.stream is None  # closed
 
@@ -205,15 +219,15 @@ def test_add_log_fh_normalizes_relative_paths(tmp_path, monkeypatch):
 def test_add_log_fh_mode(tmp_path, mode, keeps_first):
     root = logging.getLogger()
     root.setLevel(logging.INFO)
-    logfile = tmp_path / f"mode_{mode}.log"
+    log_file = tmp_path / f"mode_{mode}.log"
 
-    add_log_fh(str(logfile), mode="w")
+    add_log_fh(str(log_file), mode="w")
     root.info("first message")
-    add_log_fh(str(logfile), mode=mode)
+    add_log_fh(str(log_file), mode=mode)
     root.info("second message")
-    remove_log_fh(str(logfile))
+    remove_log_fh(str(log_file))
 
-    content = logfile.read_text(encoding="utf-8")
+    content = log_file.read_text(encoding="utf-8")
     assert ("first message" in content) is keeps_first
     assert "second message" in content
 
@@ -240,23 +254,23 @@ def test_remove_log_fh_only_removes_matching_handler(tmp_path):
 
 def test_log_to_file_adds_and_removes_file_handler(tmp_path):
     setup_logging(rotate=False)
-    logfile = tmp_path / "logging_alt_context.log"
+    log_file = tmp_path / "logging_alt_context.log"
 
-    with log_to_file(str(logfile)) as handler:
+    with log_to_file(str(log_file)) as handler:
         logging.getLogger().info("message written in context")
-        assert _file_handlers(logfile) == [handler]
+        assert _file_handlers(log_file) == [handler]
 
-    assert _file_handlers(logfile) == []
-    assert "message written in context" in logfile.read_text(encoding="utf-8")
+    assert _file_handlers(log_file) == []
+    assert "message written in context" in log_file.read_text(encoding="utf-8")
 
 
 def test_log_to_file_removes_handler_on_exception(tmp_path):
     setup_logging(rotate=False)
-    logfile = tmp_path / "exception.log"
+    log_file = tmp_path / "exception.log"
 
-    with pytest.raises(RuntimeError, match="boom"), log_to_file(str(logfile)):
-        handler = _file_handlers(logfile)[0]
+    with pytest.raises(RuntimeError, match="boom"), log_to_file(str(log_file)):
+        handler = _file_handlers(log_file)[0]
         raise RuntimeError("boom")
 
-    assert _file_handlers(logfile) == []
+    assert _file_handlers(log_file) == []
     assert handler.stream is None
