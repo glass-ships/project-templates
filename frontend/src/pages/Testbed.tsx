@@ -153,13 +153,7 @@ function TestButtons() {
               iconPosition="left"
               onClick={() => console.log("Icon clicked")}
             />
-            <AppButton
-              text="Link to nexus"
-              color="tertiary"
-              design="circle"
-              icon="vial"
-              linkTo="/nexus"
-            />
+            <AppButton text="Link to nexus" color="tertiary" design="circle" icon="vial" linkTo="/nexus" />
             <AppButton icon="vial" text="Broken link" color="none" design="circle" linkTo="/doesnotexist" />
             <AppButton design="circle" icon="vial" iconColor="white" />
           </AppFlex>
