@@ -89,9 +89,9 @@ class InterceptHandler(logging.Handler):
             depth += 1
 
         # Use the stdlib logger name so `logger_levels` keys match e.g. "discord" as before
-        logger.opt(depth=depth, exception=record.exc_info).patch(
-            lambda r: r.update(name=record.name)
-        ).log(level, record.getMessage())
+        logger.opt(depth=depth, exception=record.exc_info).patch(lambda r: r.update(name=record.name)).log(
+            level, record.getMessage()
+        )
 
 
 # Level filter shared by all sinks, e.g. {"": "INFO", "discord": "WARNING"}.
