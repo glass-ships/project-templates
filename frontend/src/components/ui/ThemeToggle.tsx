@@ -6,23 +6,19 @@ export default function ThemeToggle() {
   const checkboxRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Get initial theme from user preference or default to dark
     const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
     const initialTheme = localStorage.getItem("theme") || (prefersLight ? "light" : "dark");
-    document.body.classList.add(initialTheme);
-
-    // Set checkbox state based on initial theme
-    if (checkboxRef.current) {
-      checkboxRef.current.checked = initialTheme === "light";
-    }
+    document.documentElement.classList.add(initialTheme);
+    if (checkboxRef.current) checkboxRef.current.checked = initialTheme === "light";
   }, []);
 
   // Toggle theme function
   function toggleTheme() {
-    const currentTheme = document.body.classList.contains("light") ? "light" : "dark";
+    const root = document.documentElement;
+    const currentTheme = root.classList.contains("light") ? "light" : "dark";
     const newTheme = currentTheme === "light" ? "dark" : "light";
-    document.body.classList.remove(currentTheme);
-    document.body.classList.add(newTheme);
+    root.classList.remove(currentTheme);
+    root.classList.add(newTheme);
     localStorage.setItem("theme", newTheme);
   }
 

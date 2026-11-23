@@ -15,6 +15,7 @@ const { firstInView, restartAnimations, safeDocument, truncateBySize, waitFor } 
 
 afterEach(() => {
   vi.useRealTimers();
+  vi.unstubAllGlobals();
 });
 
 describe("safeDocument", () => {
@@ -101,5 +102,12 @@ describe("truncateBySize", () => {
 
   it("keeps at least three characters", () => {
     expect(truncateBySize("hello world", 10)).toBe("hel...");
+  });
+
+  it("imports and returns text unchanged without a document", async () => {
+    vi.stubGlobal("document", undefined);
+    vi.resetModules();
+    const dom = await import("@/utils/dom");
+    expect(dom.truncateBySize("hello world", 10)).toBe("hello world");
   });
 });

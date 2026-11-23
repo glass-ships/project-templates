@@ -64,16 +64,16 @@ test.describe("theme", () => {
   test("follows the system color scheme when nothing is saved", async ({ page }) => {
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/");
-    await expect(page.locator("body")).toHaveClass(/\bdark\b/);
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
   });
 
   test("toggles, and the choice survives a reload", async ({ page }) => {
     await setTheme(page, "dark");
     await page.goto("/");
-    await expect(page.locator("body")).toHaveClass(/\bdark\b/);
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
 
     await page.getByText("Toggle", { exact: true }).click();
-    await expect(page.locator("body")).toHaveClass(/\blight\b/);
+    await expect(page.locator("html")).toHaveClass(/\blight\b/);
 
     // addInitScript re-runs on reload, so check storage rather than reloading.
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("light");

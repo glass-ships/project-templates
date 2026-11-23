@@ -18,7 +18,7 @@ const AppBackToTopButton: React.FC<AppBackToTopButtonProps> = ({
   ariaLabel = "Back to top",
 }) => {
   const [scrollY, setScrollY] = useState(0);
-  const [windowHeight, setWindowHeight] = useState(0);
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
   // Custom hooks equivalent to @vueuse/core
   useEffect(() => {

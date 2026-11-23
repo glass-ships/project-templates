@@ -1,16 +1,18 @@
-import { lazy, useState } from "react";
-import { toast } from "react-toastify";
-import { Tooltip } from "react-tooltip";
-import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import AppBackToTopButton from "@/components/ui/AppBackToTopButton";
 import AppButton from "@/components/ui/AppButton";
 import AppCard from "@/components/ui/AppCard";
+import AppCodeBlock from "@/components/ui/AppCodeBlock";
 import AppFlex from "@/components/ui/AppFlex";
+import AppGrid from "@/components/ui/AppGrid";
 import AppIcon from "@/components/ui/AppIcon";
 import AppSection from "@/components/ui/AppSection";
 import faIcons from "@/global/icons";
-import styles from "./TestBed.module.scss";
 import "@/global/styles.scss";
+import { lazy, useState } from "react";
+import { toast } from "react-toastify";
+import { Tooltip } from "react-tooltip";
+import styles from "./TestBed.module.scss";
 
 const Modal = lazy(() => import("@/components/ui/AppModal"));
 
@@ -48,70 +50,15 @@ const colorGroups = {
 export default function Testbed() {
   return (
     <main>
-      <Navbar />
       <AppBackToTopButton ariaLabel="Back to Top" />
-      <TestColors />
       <TestText />
       <TestButtons />
+      <TestColors />
+      <TestGrid />
       <TestIcons />
       <TestTooltips />
+      <Footer />
     </main>
-  );
-}
-
-function TestColors() {
-  return (
-    <AppSection width="medium" height="auto">
-      <AppCard>
-        <h3>Test Colors</h3>
-        {Object.entries(colorGroups).map(([groupName, colors]) => (
-          <AppFlex key={`colors-${groupName}`} direction="row" gap="small">
-            {colors.map((color) => (
-              <div key={color} className={`${styles.swatch}` + ` ${styles[color]}`}>
-                <p className={styles["color-name"]}>{color}</p>
-              </div>
-            ))}
-          </AppFlex>
-        ))}
-      </AppCard>
-    </AppSection>
-  );
-}
-
-function TestText() {
-  return (
-    <AppSection width="medium" height="auto">
-      <AppCard>
-        <h1>Testbed</h1>
-        <h2>Test Header 2</h2>
-        <h3>Test Header 3</h3>
-        <h4>Test Header 4</h4>
-        <h5>Test Header 5</h5>
-        <p>
-          This is a testbed for new components and features. Lorem ipsum dolor sit amet consectetur adipiscing elit.
-          Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis.
-          Tempus leo eu aenean sed diam urna tempor.
-        </p>
-        <p>
-          Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc
-          posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos
-          himenaeos.
-        </p>
-        <code>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-          est laborum.
-        </code>
-        <pre>
-          {`function example() {
-            console.log("This is a code block with a long line that should trigger horizontal scrolling.");
-            return true;
-          }`}
-        </pre>
-      </AppCard>
-    </AppSection>
   );
 }
 
@@ -166,7 +113,7 @@ function TestButtons() {
               onClick={() => console.log("Icon clicked")}
             />
             <AppButton text="Link to nexus" color="tertiary" design="circle" icon="vial" linkTo="/nexus" />
-            <AppButton icon="vial" text="Broken link" color="none" design="circle" linkTo="/doesnotexist" />
+            <AppButton icon="vial" text="Infinite Scroll" color="none" design="circle" linkTo="/infinite-scroll" />
             <AppButton design="circle" icon="vial" iconColor="white" ariaLabel="Circle icon button" />
           </AppFlex>
           {/* small */}
@@ -178,17 +125,47 @@ function TestButtons() {
               onClick={() => console.log("Sm button 1 clicked")}
             />
             <AppButton text="Small 2" color="secondary" design="small" icon="vial" iconPosition="left" />
-            <AppButton
-              text="Small 3"
-              color="tertiary"
-              design="small"
-              icon="vial"
-              onClick={() => console.log("Sm button 3 clicked")}
-            />
-            <AppButton text="Small 4" icon="vial" color="none" design="small" linkTo="/doesnotexist" />
+            <AppButton text="Small 3" color="tertiary" design="small" icon="vial" />
+            <AppButton text="Small 4" icon="vial" color="none" design="small" />
             <AppButton design="small" icon="vial" iconColor="white" ariaLabel="Small icon button" />
           </AppFlex>
         </AppFlex>
+      </AppCard>
+    </AppSection>
+  );
+}
+
+function TestColors() {
+  return (
+    <AppSection width="medium" height="auto">
+      <AppCard>
+        <h3>Test Colors</h3>
+        {Object.entries(colorGroups).map(([groupName, colors]) => (
+          <AppFlex key={`colors-${groupName}`} direction="row" gap="small">
+            {colors.map((color) => (
+              <div key={color} className={`${styles.swatch}` + ` ${styles[color]}`}>
+                <p className={styles["color-name"]}>{color}</p>
+              </div>
+            ))}
+          </AppFlex>
+        ))}
+      </AppCard>
+    </AppSection>
+  );
+}
+
+function TestGrid() {
+  return (
+    <AppSection width="medium" height="auto">
+      <AppCard>
+        <h3>Test Grid</h3>
+        <AppGrid cols={4}>
+          {Array.from({ length: 15 }, (_, i) => i + 1).map((n) => (
+            <div key={n} className={styles["grid-item"]}>
+              {n}
+            </div>
+          ))}
+        </AppGrid>
       </AppCard>
     </AppSection>
   );
@@ -217,41 +194,88 @@ function TestIcons() {
   );
 }
 
+function TestText() {
+  return (
+    <AppSection width="medium" height="auto">
+      <AppCard>
+        <h1>Testbed</h1>
+        <h2>Test Header 2</h2>
+        <h3>Test Header 3</h3>
+        <h4>Test Header 4</h4>
+        <h5>Test Header 5</h5>
+        <p>
+          This is a testbed for new components and features. You are a worm through time. The thunder song distorts you.
+          Happiness comes. White pearls, but yellow and red in the eye. Through a mirror, inverted is made right. Leave
+          your insides by the door. Push the fingers through the surface into the wet. You’ve always been the new you.
+          You want this to be true. We stand around you while you dream. You can almost hear our words but you forget.
+          This happens more and more now.
+        </p>
+        <p>
+          You gave us the permission in your regulations. We wait in the stains. The word that describes this is
+          redacted. Repeat the word. The name of the sound. It resonates in your house. After the song, time for
+          applause. We build you till nothing remains. The egg cracks and the truth will emerge out of you. You are
+          home. You remind us of home. You’ve taken your boss with your boss with you. All hair must be eaten. Under the
+          conceptual reality behind this reality you must want these waves to drag you away.
+        </p>
+        <code>
+          After the song, time for applause. This cliché is death out of time, breaking the first the second the third
+          the fourth wall, the fifth wall, floor; no floor: you fall! How do you say “insane”? Hurts to be happy. An
+          earworm is a tune you can’t stop humming in a dream: "Baby baby baby, yeah." Just plastic. So safe and nothing
+          to worry about. Ha ha, funny. The last egg breaks now. The hole in your room is a hole in you. You came and we
+          let you in through the hole in you. You have always been here, the only child. A copy of a copy of a copy.
+          Orange peel. The picture is you holding the picture. When you hear this you will know you’re in new you. You
+          want to listen. You want to dream. You want to smile. You want to hurt. You don’t want to be.
+        </code>
+        <AppCodeBlock language="js">
+          {`
+            function example() {
+              console.log("This is a code block with a long line that should trigger horizontal scrolling.");
+              return true;
+            }
+          `}
+        </AppCodeBlock>
+      </AppCard>
+    </AppSection>
+  );
+}
+
 function TestTooltips() {
   return (
-    <AppSection width="big" height="auto">
-      <h3>Test Tooltip</h3>
-      <AppFlex direction="row">
-        <Tooltip content="Tooltip content" anchorSelect="#tooltip-left" place="left" />
-        <AppButton text="Tooltip Left" color="primary" id="tooltip-left" />
+    <AppSection width="medium" height="auto">
+      <AppCard>
+        <h3>Test Tooltip</h3>
+        <AppFlex direction="row">
+          <Tooltip content="Tooltip content" anchorSelect="#tooltip-left" place="left" />
+          <AppButton text="Tooltip Left" color="primary" id="tooltip-left" />
 
-        <Tooltip
-          content="This is an example of a tooltip with longer text content"
-          anchorSelect="#tooltip-top"
-          place="top"
-        />
-        <AppButton text="Tooltip Top" color="primary" id="tooltip-top" />
+          <Tooltip
+            content="This is an example of a tooltip with longer text content"
+            anchorSelect="#tooltip-top"
+            place="top"
+          />
+          <AppButton text="Tooltip Top" color="primary" id="tooltip-top" />
 
-        <Tooltip
-          content="This is an example of a tooltip with longer text content"
-          anchorSelect="#tooltip-bottom"
-          place="bottom"
-        />
-        <AppButton design="circle" icon="vial" color="primary" id="tooltip-bottom" ariaLabel="Tooltip Bottom" />
+          <Tooltip
+            content="This is an example of a tooltip with longer text content"
+            anchorSelect="#tooltip-bottom"
+            place="bottom"
+          />
+          <AppButton design="circle" icon="vial" color="primary" id="tooltip-bottom" ariaLabel="Tooltip Bottom" />
 
-        <Tooltip content="Tooltip content" place="right" anchorSelect="#tooltip-right" />
-        <AppButton design="small" icon="vial" color="primary" id="tooltip-right" ariaLabel="Tooltip Right" />
-      </AppFlex>
+          <Tooltip content="Tooltip content" place="right" anchorSelect="#tooltip-right" />
+          <AppButton design="small" icon="vial" color="primary" id="tooltip-right" ariaLabel="Tooltip Right" />
+        </AppFlex>
 
-      <AppFlex>
-        <Tooltip content="FA icon with tooltip" anchorSelect="#tooltip-icon" />
-        <AppIcon icon="vial" id="tooltip-icon" />
-        <Tooltip content="Custom icon with tooltip" anchorSelect="#custom-tooltip-icon" />
-        <AppIcon icon="logo" id="custom-tooltip-icon" />
-      </AppFlex>
+        <AppFlex>
+          <Tooltip content="FA icon with tooltip" anchorSelect="#tooltip-icon" />
+          <AppIcon icon="vial" id="tooltip-icon" />
+          <Tooltip content="Custom icon with tooltip" anchorSelect="#custom-tooltip-icon" />
+          <AppIcon icon="logo" id="custom-tooltip-icon" />
+        </AppFlex>
 
-      <Tooltip content="I'm interactible! You can click inside me." anchorSelect="#tooltip-text" clickable />
-      <p id="tooltip-text">Hover over me too.</p>
+        <Tooltip content="I'm interactible! You can click inside me." anchorSelect="#tooltip-text" clickable />
+        <p id="tooltip-text">Hover over me too.</p>
+      </AppCard>
     </AppSection>
   );
 }

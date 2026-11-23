@@ -73,7 +73,7 @@ $section-big: 1400px; // 1200px;
 
 /** Effects */
 $rounded: 5px;
-$outline: 0 0 0 3px $primary-light;
+$outline: 3px solid $primary-light;
 $shadow: 1px 2px 8px oklch(0.05 0 0 / 0.7);
 $shadow-s: inset 
   0 1px 2px #ffffff30, /* top highlight */ 

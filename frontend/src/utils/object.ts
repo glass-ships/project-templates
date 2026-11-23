@@ -10,31 +10,32 @@ export const mergeArrays = (
   /** only include entries that are in array A */
   exclusive = false,
 ): Obj[] => {
-  /** store to keep id-deduped list of entries */
-  const result: { [key: string]: Obj } = {};
+  /** store to keep id-deduped list of entries, in insertion order */
+  const result = new Map<string | Obj, Obj>();
 
   /** merge func */
   const mergeWithResult =
     (add = true) =>
     (object: Obj) => {
-      const { id = "" } = object;
+      /** entries without an id are keyed by themselves, so each stays separate */
+      const key = object.id ?? object;
       /** if add flag true, or entry already in store, add to store */
-      if (add || result[id])
+      if (add || result.has(key))
         /** deep merge array entry with store entry using lodash */
-        result[id] = merge(result[id] || {}, object);
+        result.set(key, merge(result.get(key) || {}, object));
     };
 
   /** run merge func for each array */
   arrayA.forEach(mergeWithResult(true));
   arrayB.forEach(mergeWithResult(!exclusive));
 
-  /** convert object back to array */
-  return Object.values(result);
+  /** convert store back to array */
+  return [...result.values()];
 };
 
 /** rename key in object in place */
 export const renameKey = (object: { [key: string]: unknown }, oldKey: string, newKey: string): void => {
-  if (object[oldKey]) {
+  if (oldKey in object) {
     object[newKey] = object[oldKey];
     delete object[oldKey];
   }
@@ -43,12 +44,11 @@ export const renameKey = (object: { [key: string]: unknown }, oldKey: string, ne
 /** safe json stringify */
 export const stringify = (value: unknown, space = 0) => {
   try {
-    if (!value) return "";
+    if (value === undefined || value === null) return "";
     else return JSON.stringify(value, null, space);
   } catch (error) {
-    console.warn("Invalid JSON stringify");
-    console.debug(value);
-    console.debug(error);
+    console.warn(`Invalid JSON stringify for ${{ value }}`);
+    console.debug({ error });
     return "";
   }
 };
@@ -56,12 +56,10 @@ export const stringify = (value: unknown, space = 0) => {
 /** safe json parse */
 export const parse = <Type>(value: string, defaultValue: Type) => {
   try {
-    if (!value) return defaultValue;
-    else return JSON.parse(value) as Type;
+    return JSON.parse(value) as Type;
   } catch (error) {
-    console.warn("Invalid JSON parse");
-    console.debug(value);
-    console.debug(error);
+    console.warn(`Invalid JSON parse for ${{ value }}`);
+    console.debug({ error });
     return defaultValue;
   }
 };

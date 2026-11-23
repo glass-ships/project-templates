@@ -107,8 +107,8 @@ export const request = async <Response>(
         break;
       case 404:
         return parseAs === "text"
-          ? ("Event not found" as unknown as Response)
-          : ({ error: "Event not found" } as unknown as Response);
+          ? ("Not found" as unknown as Response)
+          : ({ error: "Not found" } as unknown as Response);
       case 500:
         error = `Internal Server Error`;
         break;

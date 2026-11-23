@@ -93,8 +93,8 @@ describe("request", () => {
 
   it("returns a not-found value instead of throwing on 404", async () => {
     fetchMock.mockResolvedValue(jsonResponse({}, 404));
-    await expect(request(uniquePath("missing-json"))).resolves.toEqual({ error: "Event not found" });
-    await expect(request(uniquePath("missing-text"), {}, {}, "text")).resolves.toBe("Event not found");
+    await expect(request(uniquePath("missing-json"))).resolves.toEqual({ error: "Not found" });
+    await expect(request(uniquePath("missing-text"), {}, {}, "text")).resolves.toBe("Not found");
   });
 
   it("throws when the body cannot be parsed", async () => {

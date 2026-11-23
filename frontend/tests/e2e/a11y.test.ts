@@ -9,8 +9,6 @@ import { expect, setTheme, test } from "./fixtures";
 const TESTBED: Record<string, string> = {
   // TODO: AppButton text (primary/secondary/none) and the color swatch labels fail contrast in both themes
   "color-contrast": "AppButton text, color swatch labels",
-  // TODO: the <pre> code sample scrolls horizontally but isn't keyboard focusable (needs tabindex="0")
-  "scrollable-region-focusable": "<pre> code sample",
 };
 
 const KNOWN: Record<string, Record<string, string>> = {
@@ -36,7 +34,7 @@ for (const theme of ["light", "dark"] as const) {
     await setTheme(page, theme);
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "Testbed", level: 1 })).toBeVisible();
-    await expect(page.locator("body")).toHaveClass(new RegExp(`\\b${theme}\\b`));
+    await expect(page.locator("html")).toHaveClass(new RegExp(`\\b${theme}\\b`));
     await checkA11y(page, `Testbed (${theme})`);
   });
 }

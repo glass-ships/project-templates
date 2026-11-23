@@ -9,6 +9,7 @@ const stubPrefersLight = (prefersLight: boolean) =>
     vi.fn((query: string) => ({ matches: prefersLight, media: query })),
   );
 
+const html = document.documentElement;
 const getCheckbox = () => screen.getByRole("checkbox") as HTMLInputElement;
 
 describe("ThemeToggle", () => {
@@ -18,7 +19,7 @@ describe("ThemeToggle", () => {
 
     render(<ThemeToggle />);
 
-    expect(document.body).toHaveClass("light");
+    expect(html).toHaveClass("light");
     expect(getCheckbox().checked).toBe(true);
   });
 
@@ -26,7 +27,7 @@ describe("ThemeToggle", () => {
     stubPrefersLight(true);
     render(<ThemeToggle />);
 
-    expect(document.body).toHaveClass("light");
+    expect(html).toHaveClass("light");
     expect(window.matchMedia).toHaveBeenCalledWith("(prefers-color-scheme: light)");
   });
 
@@ -34,7 +35,7 @@ describe("ThemeToggle", () => {
     stubPrefersLight(false);
     render(<ThemeToggle />);
 
-    expect(document.body).toHaveClass("dark");
+    expect(html).toHaveClass("dark");
     expect(getCheckbox().checked).toBe(false);
   });
 
@@ -43,12 +44,12 @@ describe("ThemeToggle", () => {
     render(<ThemeToggle />);
 
     await userEvent.click(getCheckbox());
-    expect(document.body).toHaveClass("light");
-    expect(document.body).not.toHaveClass("dark");
+    expect(html).toHaveClass("light");
+    expect(html).not.toHaveClass("dark");
     expect(localStorage.getItem("theme")).toBe("light");
 
     await userEvent.click(getCheckbox());
-    expect(document.body).toHaveClass("dark");
+    expect(html).toHaveClass("dark");
     expect(localStorage.getItem("theme")).toBe("dark");
   });
 
@@ -58,6 +59,6 @@ describe("ThemeToggle", () => {
 
     await userEvent.click(screen.getByText("Toggle"));
 
-    expect(document.body).toHaveClass("light");
+    expect(html).toHaveClass("light");
   });
 });

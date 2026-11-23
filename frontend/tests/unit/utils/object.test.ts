@@ -22,6 +22,17 @@ describe("mergeArrays", () => {
     expect(mergeArrays([{ id: "a" }, { id: "a" }], [])).toEqual([{ id: "a" }]);
   });
 
+  it("keeps entries without an id separate", () => {
+    const noIds: object[] = [{ name: "x" }, { name: "y" }];
+    const other: object[] = [{ name: "z" }];
+    expect(mergeArrays(noIds, other)).toEqual([{ name: "x" }, { name: "y" }, { name: "z" }]);
+    expect(mergeArrays(noIds, other, true)).toEqual(noIds);
+  });
+
+  it("keeps insertion order for numeric ids", () => {
+    expect(mergeArrays([{ id: "b" }, { id: "2" }, { id: "1" }], [])).toEqual([{ id: "b" }, { id: "2" }, { id: "1" }]);
+  });
+
   it("does not mutate its inputs", () => {
     mergeArrays(arrayA, arrayB);
     expect(arrayA[0]).toEqual({ id: "a", nested: { x: 1 } });
@@ -34,6 +45,12 @@ describe("renameKey", () => {
     const object: Record<string, unknown> = { old: "value", other: 1 };
     renameKey(object, "old", "new");
     expect(object).toEqual({ new: "value", other: 1 });
+  });
+
+  it("renames keys whose value is falsy", () => {
+    const object: Record<string, unknown> = { a: 0, b: "", c: false, d: null };
+    for (const key of ["a", "b", "c", "d"]) renameKey(object, key, key.toUpperCase());
+    expect(object).toEqual({ A: 0, B: "", C: false, D: null });
   });
 
   it("does nothing when the key is missing", () => {
@@ -52,6 +69,12 @@ describe("stringify", () => {
   it("returns an empty string for missing values", () => {
     expect(stringify(undefined)).toBe("");
     expect(stringify(null)).toBe("");
+  });
+
+  it("serializes falsy values", () => {
+    expect(stringify(0)).toBe("0");
+    expect(stringify(false)).toBe("false");
+    expect(stringify("")).toBe('""');
   });
 
   it("returns an empty string and warns instead of throwing on circular values", () => {

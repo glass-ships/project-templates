@@ -22,6 +22,7 @@ afterEach(() => {
   localStorage.clear();
   document.body.innerHTML = "";
   document.body.className = "";
+  document.documentElement.className = "";
   document.body.removeAttribute("style");
   vi.restoreAllMocks();
   vi.unstubAllGlobals();

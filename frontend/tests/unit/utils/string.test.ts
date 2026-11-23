@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { breakUrl, collapse, copyToClipboard, formatNumber, stripHtml } from "@/utils/string";
+import { breakUrl, collapse, copyToClipboard, dedent, formatNumber, stripHtml } from "@/utils/string";
 
 describe("collapse", () => {
   it("collapses runs of whitespace and trims", () => {
@@ -8,6 +8,28 @@ describe("collapse", () => {
 
   it("defaults to an empty string", () => {
     expect(collapse()).toBe("");
+  });
+});
+
+describe("dedent", () => {
+  it("removes the indentation shared by all lines and keeps relative indentation", () => {
+    expect(dedent("    a {\n      b;\n    }")).toBe("a {\n  b;\n}");
+  });
+
+  it("trims leading and trailing blank lines", () => {
+    expect(dedent("\n\n    a\n    b\n  \n")).toBe("a\nb");
+  });
+
+  it("ignores blank lines when measuring indentation", () => {
+    expect(dedent("    a\n\n    b")).toBe("a\n\nb");
+  });
+
+  it("leaves unindented text alone", () => {
+    expect(dedent("a\n  b")).toBe("a\n  b");
+  });
+
+  it("defaults to an empty string", () => {
+    expect(dedent()).toBe("");
   });
 });
 

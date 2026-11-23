@@ -102,7 +102,7 @@ const generateField = debounce(() => {
   /** hard limit dots for performance */
   while (dots.length > 200) dots.splice(Math.floor(dots.length * Math.random()), 1);
 
-  /** sort dots by z */
+  /** sort dots by x */
   dots = sortBy(dots, (p) => p.point.x);
 
   /** go through each pair of dots */
@@ -196,6 +196,17 @@ function draw() {
   }
 }
 
+/** pending pulse timeouts, so they can be cancelled on unmount */
+const pulseTimers = new Set<number>();
+
+function later(fn: () => void, ms: number) {
+  const id = window.setTimeout(() => {
+    pulseTimers.delete(id);
+    fn();
+  }, ms);
+  pulseTimers.add(id);
+}
+
 /** pulse color of field of dots and links from inward to outward */
 function pulse() {
   for (const entity of [...dots, ...links]) {
@@ -210,10 +221,10 @@ function pulse() {
     const start = dist(center.x - width / 2, center.y - height / 2) / speed / band;
     const reset = start + 100 / speed;
     /** set timers */
-    window.setTimeout(() => {
+    later(() => {
       entity.colorTarget = [...pulseColor];
     }, start);
-    window.setTimeout(() => {
+    later(() => {
       entity.colorTarget = [...baseColor];
     }, reset);
   }
@@ -243,6 +254,7 @@ export default function Nexus() {
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      generateField.cancel();
     };
   }, []);
 
@@ -272,6 +284,8 @@ export default function Nexus() {
     return () => {
       clearInterval(stepInterval);
       clearInterval(pulseInterval);
+      for (const id of pulseTimers) clearTimeout(id);
+      pulseTimers.clear();
     };
   }, []);
 

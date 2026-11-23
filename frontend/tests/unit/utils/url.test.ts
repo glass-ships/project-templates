@@ -25,8 +25,8 @@ describe("isExternal", () => {
 
   it("is false for the site's own domain", () => {
     // Update along with the domain hardcoded in src/utils/url.ts
-    expect(isExternal("https://monarchinitiative.org/page")).toBe(false);
-    expect(isExternal("https://docs.monarchinitiative.org/page")).toBe(false);
+    expect(isExternal("https://glass-ships.com/page")).toBe(false);
+    expect(isExternal("https://docs.glass-ships.com/page")).toBe(false);
   });
 });
 
