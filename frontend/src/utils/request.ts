@@ -17,7 +17,7 @@ export const requestSimple = async <Type>(url: string, parseAs: string = "json")
 /* --------------------------------------------------------------------------------- */
 
 /** Type for URL parameters */
-type Param = string | number | boolean | undefined | null;
+export type Param = string | number | boolean | undefined | null;
 export type Params = { [key: string]: Param | Param[] };
 
 /** In-memory cache for GET requests */

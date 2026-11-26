@@ -1,9 +1,5 @@
-// Generic button component that either does something (<button>) or goes somewhere (<a>)
-
-/**
- * TODO: add copy
- * TODO: add tooltip
- */
+// TODO: add copy
+// TODO: add tooltip
 import type React from "react";
 import { useContext } from "react";
 import styles from "./AppButton.module.scss";
@@ -12,17 +8,27 @@ import { LinkContext } from "./LinkContext";
 
 // import { copyToClipboard } from "@/utils/string";
 
-interface AppButtonBaseProps {
+export interface AppButtonBaseProps {
   id?: string;
+  /** Background color from the theme; `"none"` uses the page background. Defaults to `"primary"`. */
   color?: "primary" | "secondary" | "tertiary" | "none";
+  /** `"normal"` is a rounded rectangle, `"circle"` is fully rounded, `"small"` is compact. Defaults to `"normal"`. */
   design?: "normal" | "circle" | "small";
+  /** `"submit"` submits the button's form. `"link"` renders a link, as does setting `linkTo`. Defaults to `"button"`. */
   type?: "button" | "link" | "submit";
+  /** Name of an icon to show next to the text, as for {@link AppIcon}. */
   icon?: string;
+  /** Defaults to the text color. */
   iconColor?: string;
+  /** Defaults to `"right"`. */
   iconPosition?: "left" | "right";
+  /** Makes the button a link to this href. See {@link AppButton} for how links are rendered. */
   linkTo?: string;
+  /** Opens the link in a new tab. */
   newTab?: boolean;
+  /** Not called for links. */
   onClick?: (event: React.MouseEvent<HTMLButtonElement> | null) => void;
+  /** Not called for links. */
   onKeyDown?: (event: React.KeyboardEvent<HTMLButtonElement>) => void;
 }
 
@@ -33,6 +39,19 @@ interface AppButtonBaseProps {
 export type AppButtonProps = AppButtonBaseProps &
   ({ text: string; ariaLabel?: string } | { text?: string; ariaLabel: string });
 
+/**
+ * A button that either does something (a `<button>`) or goes somewhere (a link, when `linkTo` is set).
+ *
+ * Links are rendered with the element from {@link LinkContext}: a plain `<a>` by default, or
+ * {@link components/RouterLink! | RouterLink} in this app (see `main.tsx`), so internal links navigate without a page reload.
+ *
+ * @example
+ * ```tsx
+ * <AppButton text="Save" onClick={save} />
+ * <AppButton text="Docs" icon="arrow-up-right-from-square" linkTo="https://example.com" newTab />
+ * <AppButton icon="bars" ariaLabel="Menu" design="circle" onClick={toggleMenu} />
+ * ```
+ */
 export default function AppButton({
   id,
   color = "primary",

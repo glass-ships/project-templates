@@ -3,6 +3,12 @@ import { Tooltip } from "react-tooltip";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import "./ThemeToggle.scss";
 
+/**
+ * A button that switches between the light and dark themes, by putting a `light` or `dark` class on `<html>`.
+ *
+ * The choice is saved in `localStorage` under `theme`. Until the user picks one, it follows the
+ * system setting. Render one per page: it has a fixed id (`themeToggle`) for its tooltip.
+ */
 export default function ThemeToggle() {
   const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
   // useLocalStorage catches storage errors, so blocked storage falls back to the system theme

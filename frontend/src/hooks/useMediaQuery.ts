@@ -1,13 +1,17 @@
-/**
-Usage:
-------
-
-const isMobile = useMediaQuery('(max-width: 768px)');
-
-return <p>{isMobile ? 'Mobile View' : 'Desktop View'}</p>;
-*/
 import { useEffect, useState } from "react";
 
+/**
+ * Whether a CSS media query matches, updated when it changes (e.g. the window is resized).
+ *
+ * @param query - A media query, as in CSS: `"(max-width: 768px)"`.
+ * @returns `false` on the first render, then whether `query` matches.
+ * @example
+ * ```tsx
+ * const isMobile = useMediaQuery("(max-width: 768px)");
+ *
+ * return <p>{isMobile ? "Mobile View" : "Desktop View"}</p>;
+ * ```
+ */
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
 

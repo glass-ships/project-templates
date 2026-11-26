@@ -1,17 +1,20 @@
 from pathlib import Path
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException
+from starlette.types import Scope
 
 from python_project.api import example
 from python_project.api.middleware.logging_middleware import LoggingMiddleware
 
-# Project root directory to find and include built frontend files
-ROOT_DIR = Path(__file__).parent.parent.parent.parent
-print(f"Root directory: {ROOT_DIR}")
+# Repo root (python/src/python_project/api/main.py -> 4 folders up), and the folder the frontend
+# builds to (build.outDir in frontend/vite.config.ts)
+ROOT_DIR = Path(__file__).resolve().parents[4]
+FRONTEND_DIR = ROOT_DIR / "dist"
 
 PREFIX = "/api"
 
@@ -43,26 +46,49 @@ app.add_middleware(
 
 app.add_middleware(LoggingMiddleware)
 
-# If we have a frontend built, serve it as static files
-if ROOT_DIR.joinpath("static").exists():
-    app.mount("", StaticFiles(directory=ROOT_DIR.joinpath("static"), html=True), name="static")
-else:
-    print("Warning: Frontend not built. Please run 'bun run build' in the 'frontend' directory.")
-
-
 ##############
 ### ROUTES ###
 ##############
 
 
-@app.get("/")
-async def _root():
-    return RedirectResponse(url="/docs")
-
-
 @app.get("/api")
 async def _api():
     return RedirectResponse(url="/docs")
+
+
+################
+### Frontend ###
+################
+
+
+class FrontendFiles(StaticFiles):
+    """The built frontend, where a path that isn't a file gets index.html.
+
+    The frontend has its own routes (e.g. /nexus), which only exist in the browser. Sending them
+    index.html lets those pages load when opened from a link or refreshed. Paths under /api, and
+    paths with a file extension (a missing /logo.png), still get a 404.
+    """
+
+    async def get_response(self, path: str, scope: Scope) -> Response:
+        try:
+            return await super().get_response(path, scope)
+        except HTTPException as exc:
+            is_api = path == "api" or path.startswith("api/")
+            is_file = "." in path.rsplit("/", 1)[-1]
+            if exc.status_code != 404 or is_api or is_file:
+                raise
+            return await super().get_response("index.html", scope)
+
+
+# Mounted last, so the API routes above come first
+if FRONTEND_DIR.exists():
+    app.mount("", FrontendFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+else:
+    print("Warning: Frontend not built. Please run 'bun run build' in the 'frontend' directory.")
+
+    @app.get("/")
+    async def _root():
+        return RedirectResponse(url="/docs")
 
 
 def run():

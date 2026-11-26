@@ -1,7 +1,7 @@
 import merge from "lodash/merge";
 
 /** object with id field */
-type Obj = { id?: string };
+export type Obj = { id?: string };
 
 /** merge two arrays of objects by id */
 export const mergeArrays = (

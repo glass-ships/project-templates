@@ -14,7 +14,8 @@
     "test:format": "biome format src tests",
     "test:lint": "biome check --formatter-enabled=false src tests",
     "format": "biome format src tests --write",
-    "lint": "biome check src tests --fix"
+    "lint": "biome check src tests --fix",
+    "docs": "cd typedoc && bun install && bun run docs"
   },
   "_notes_": {
     "dependencies": "Use `bunx depcheck` to check for unused or missing dependencies"

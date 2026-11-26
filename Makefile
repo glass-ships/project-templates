@@ -1,7 +1,7 @@
 ROOTDIR = $(shell pwd)
-RUN = uv --project backend run
-VERSION = $(shell uv --project src/python_project version -s)
-SCHEMADIR = $(ROOTDIR)/backend/src/monarch_py/datamodels
+# --extra dev on every run: without it, uv would remove the dev tools (pytest, ruff, zensical) from the venv
+RUN = uv run --project python --extra dev
+VERSION = $(shell uv version --short --project python)
 
 
 # This nifty grep/sort/awk pipeline collects all comments headed by the double "#" symbols next to each target and recycles them as comments
@@ -11,12 +11,12 @@ help: ## Print this help message
 
 ### Installation and Setup ###
 
-.PHONY: fresh 
+.PHONY: fresh
 fresh: clean all ## Clean and install everything
 
 
 .PHONY: all
-all: install model docs ## Install everything
+all: install docs ## Install everything and build the docs
 
 
 .PHONY: install
@@ -26,20 +26,27 @@ install: install-backend install-frontend ## Install backend and frontend
 .PHONY: install-backend
 install-backend: ## Install backend
 	cd python && \
-		uv pip install .[dev]
+		uv sync --extra dev
 
 
 .PHONY: install-frontend
 install-frontend: ## Install frontend
-	cd src/react_project && \
+	cd frontend && \
 		bun install
 
 
 ### Documentation ###
 
 .PHONY: docs
-docs: ## Generate documentation
-	# Add Documentation Generation Here
+docs: ## Build the docs site into docs/site/ (generates the frontend API reference first)
+	cd frontend && bun run docs
+	$(RUN) zensical build --strict -f docs/zensical.toml
+
+
+.PHONY: docs-serve
+docs-serve: ## Preview the docs site at http://localhost:8000
+	cd frontend && bun run docs
+	$(RUN) zensical serve -f docs/zensical.toml
 
 ### Testing ###
 
@@ -49,35 +56,39 @@ test: test-backend test-frontend ## Run all tests
 
 .PHONY: test-backend
 test-backend: ## Run backend tests
-	$(RUN) pytest src/python_project/tests
+	cd python && \
+		uv run --extra dev pytest tests
 
 
-# Requires adding test script to package.json
 .PHONY: test-frontend
-test-frontend:  ## Run frontend tests 
-	cd src/react_project && \
-		bun run test
+test-frontend: ## Run frontend type check, unit and end-to-end tests
+	cd frontend && \
+		bun run test:types && \
+		bun run test:unit && \
+		bun run test:e2e
 
 
 ### Development ###
 
 .PHONY: dev-api
-dev-api: ## Run api in development mode
-	# cd src/python_project && \
-	# 	uv run uvicorn src.monarch_py.api.main:app --reload
+dev-api: ## Run the api, restarting on changes (http://127.0.0.1:9000)
+	$(RUN) my_api
 
 
 .PHONY: dev-frontend
-dev-frontend: ## Run frontend in development mode
-	cd src/react_project && \
+dev-frontend: ## Run the frontend dev server (http://localhost:5173)
+	cd frontend && \
 		bun run dev
 
 
 ### Docker ###
+# There's no Dockerfile yet: add one to python/, and set IMAGE_URL (e.g. make docker-build IMAGE_URL=registry/name)
+
+IMAGE_VERSION ?= $(VERSION)
 
 .PHONY: docker-build
 docker-build: ## Build docker image
-	cd backend && \
+	cd python && \
 		docker build --rm --tag $(IMAGE_URL):$(IMAGE_VERSION) .
 
 
@@ -89,16 +100,16 @@ docker-push: ## Push docker image
 ### Linting, Formatting, and Cleaning ###
 
 .PHONY: clean
-clean: ## remove local files from python installation etc.
-	rm -f `find . -type f -name '*.py[co]' -o -name '_version.py'` \
-	rm -rf `find . -name __pycache__ -o -name "*.egg-info"` \
-		**/.ipynb_checkpoints \
-		.ruff_cache \
-		.pytest_cache \
+clean: ## Remove build output, caches, the frontend and docs builds, and python/.venv
+	rm -f `find . -path ./frontend/node_modules -prune -o -type f \( -name '*.py[co]' -o -name '_version.py' \) -print`
+	rm -rf `find . -path ./frontend/node_modules -prune -o \( -name __pycache__ -o -name "*.egg-info" -o -name .ipynb_checkpoints \) -print`
+	rm -rf \
+		.ruff_cache python/.ruff_cache \
+		.pytest_cache python/.pytest_cache \
 		.coverage htmlcov \
 		build dist \
-		src/react_project/dist \
-		src/python_project/.venv 
+		docs/site docs/frontend/api \
+		python/.venv
 
 .PHONY: lint
 lint: lint-frontend lint-backend ## Lint all code
@@ -106,14 +117,15 @@ lint: lint-frontend lint-backend ## Lint all code
 
 .PHONY: lint-backend
 lint-backend: ## Lint backend code
-	$(RUN) ruff check --diff --exit-zero python
+	$(RUN) ruff check python
 	$(RUN) ruff format --check --diff python
 
 
 .PHONY: lint-frontend
 lint-frontend: ## Lint frontend code
-	# cd frontend && \
-	# 	bun run lint
+	cd frontend && \
+		bun run test:lint && \
+		bun run test:format
 
 
 .PHONY: format
@@ -128,5 +140,6 @@ format-backend: ## Format backend code
 
 .PHONY: format-frontend
 format-frontend: ## Format frontend code
-	cd src/react_project && \
-		bun run lint
+	cd frontend && \
+		bun run lint && \
+		bun run format

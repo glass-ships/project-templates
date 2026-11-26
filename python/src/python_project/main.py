@@ -7,14 +7,9 @@ import typer
 from python_project.exceptions import CustomException
 from python_project.utils.logging import setup_logging
 
-app = typer.Typer()
+app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
 setup_logging(level="DEBUG", rotate=False)
 logger = logging.getLogger(__name__)
-
-
-class CustomHelpTyper(typer.Typer):
-    def get_help_option_names(self) -> tuple[str, ...]:
-        return ("-h", "--help")
 
 
 @app.callback(invoke_without_command=True)
