@@ -172,9 +172,7 @@ function TestGrid() {
         <h3>Test Grid</h3>
         <AppGrid cols={4}>
           {Array.from({ length: 15 }, (_, i) => i + 1).map((n) => (
-            <div key={n} className={styles["grid-item"]}>
-              {n}
-            </div>
+            <div key={n}>{n}</div>
           ))}
         </AppGrid>
       </AppCard>

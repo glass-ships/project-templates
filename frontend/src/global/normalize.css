@@ -5,10 +5,14 @@
   box-sizing: border-box;
 }
 
-html {
-  /* Enable smooth scrolling */
-  scroll-behavior: smooth;
+/* Enable smooth scrolling, unless the user prefers reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
 
+html {
   /* Prevent font size inflation */
   -moz-text-size-adjust: none;
   -webkit-text-size-adjust: none;

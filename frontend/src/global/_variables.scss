@@ -38,10 +38,10 @@ $off-black: oklch(0.3 0 0);
 $black: oklch(0.15 0 0);
 
 /* Theme Colors */
-$primary: light-dark(oklch(0.5 0.2 280), oklch(0.7 0.2 280));
+$primary: light-dark(oklch(0.5 0.2 280), oklch(0.6 0.2 280));
 $primary-dark: oklch(from $primary calc(l - 0.1) c h);
 $primary-light: oklch(from $primary calc(l + 0.1) c h);
-$secondary: light-dark(oklch(0.6 0.1 185), oklch(0.7 0.1 185));
+$secondary: light-dark(oklch(0.5 0.1 185), oklch(0.6 0.1 185));
 $secondary-dark: oklch(from $secondary calc(l - 0.1) c h);
 $secondary-light: oklch(from $secondary calc(l + 0.1) c h);
 $tertiary: oklch(0.86 0.13 90);
@@ -52,8 +52,8 @@ $bg: light-dark($off-white, $off-black);
 $bg-dark: light-dark($light-grey, oklch(0.26 0.05 280));
 
 /* Text Colors */
-$text: light-dark(oklch(0.15 0 264), oklch(0.96 0 264));
-$text-muted: light-dark(oklch(0.4 0 264), oklch(0.76 0 264));
+$text: light-dark(oklch(0.15 0 0), oklch(0.96 0 0));
+$text-muted: light-dark(oklch(0.4 0 0), oklch(0.76 0 0));
 
 /* Misc */
 $success: light-dark(oklch(0.65 0.12 150), oklch(0.76 0.18 150));

@@ -125,9 +125,7 @@ pre {
 /* react-tooltip styles */
 body .react-tooltip {
   background-color: v.$secondary-light;
-  color: v.$off-black;
-  // background-color: light-dark(v.$off-black, v.$off-white);
-  // color: light-dark(v.$light-grey, v.$dark-grey);
+  color: light-dark(v.$white, v.$black);
   border-radius: v.$rounded;
   box-shadow: v.$shadow-m;
   --rt-opacity: 1;

@@ -80,13 +80,16 @@ test.describe("Testbed (/)", () => {
 });
 
 test.describe("theme", () => {
-  test("follows the system color scheme when nothing is saved", async ({ page }) => {
-    await page.emulateMedia({ colorScheme: "dark" });
-    await page.goto("/");
-    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
-  });
+  // both schemes: dark is also the fallback, so checking dark alone can't tell them apart
+  for (const scheme of ["light", "dark"] as const) {
+    test(`follows a ${scheme} system color scheme when nothing is saved`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto("/");
+      await expect(page.locator("html")).toHaveClass(new RegExp(`\\b${scheme}\\b`));
+    });
+  }
 
-  test("toggles, and the choice survives a reload", async ({ page }) => {
+  test("toggles, and saves the choice", async ({ page }) => {
     await setTheme(page, "dark");
     await page.goto("/");
     await expect(page.locator("html")).toHaveClass(/\bdark\b/);
@@ -97,6 +100,19 @@ test.describe("theme", () => {
     // addInitScript re-runs on reload, so check storage rather than reloading.
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe('"light"');
   });
+});
+
+test.describe("smooth scrolling", () => {
+  for (const [reducedMotion, expected] of [
+    ["no-preference", "smooth"],
+    ["reduce", "auto"],
+  ] as const) {
+    test(`is ${expected} when the user's reduced-motion setting is ${reducedMotion}`, async ({ page }) => {
+      await page.emulateMedia({ reducedMotion });
+      await page.goto("/");
+      await expect(page.locator("html")).toHaveCSS("scroll-behavior", expected);
+    });
+  }
 });
 
 // a page whose content is all there on first render; see the shortcut on ScrollToHash
@@ -111,7 +127,25 @@ test("nexus page draws its canvas", async ({ page }) => {
   await page.goto("/nexus");
   const canvas = page.locator("canvas#nexus");
   await expect(canvas).toBeVisible();
-  expect(await canvas.evaluate((el: HTMLCanvasElement) => el.width)).toBeGreaterThan(0);
+
+  // sized to the window (a canvas that was never sized is 300x150)
+  const size = await canvas.evaluate((el: HTMLCanvasElement) => ({
+    width: el.width,
+    expected: Math.floor(window.innerWidth * window.devicePixelRatio),
+  }));
+  expect(size.width).toBe(size.expected);
+
+  // and something was drawn: some pixels aren't transparent
+  await expect
+    .poll(() =>
+      canvas.evaluate((el: HTMLCanvasElement) => {
+        const data = el.getContext("2d")?.getImageData(0, 0, el.width, el.height).data ?? [];
+        let drawn = 0;
+        for (let i = 3; i < data.length; i += 4) if (data[i] > 0) drawn++;
+        return drawn;
+      }),
+    )
+    .toBeGreaterThan(0);
 });
 
 test("unknown routes show the 404 page with a way home", async ({ page }) => {
