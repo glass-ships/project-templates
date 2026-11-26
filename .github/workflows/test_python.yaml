@@ -1,11 +1,8 @@
-name: Test Backend
+name: Test Python
 
 on:
   pull_request:
   workflow_dispatch:
-
-env:
-  PYTHONPATH: ${{ github.workspace }}/python
 
 defaults:
   run:
@@ -13,40 +10,33 @@ defaults:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.13", "3.14", "3.15"]
-        os: [ubuntu-latest]
-
-    env:
-      # Every uv command in this job must target the matrix interpreter.
-      # Without this, `uv run` would rebuild the
-      # environment on the pinned version and each leg would silently test the
-      # same Python.
-      UV_PYTHON: ${{ matrix.python-version }}
 
     steps:
-      - uses: actions/checkout@main
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@main
+      - name: Set up uv and Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
+          # sets UV_PYTHON, so every uv command below uses this version, not the newest one installed
           python-version: ${{ matrix.python-version }}
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@main
-        with:
           enable-cache: true
+          cache-dependency-glob: python/pyproject.toml
 
-      - name: Verify lockfile is up-to-date
-        run: |
-          uv lock --check
+      # the dev extra has pytest and ruff (uv.lock is gitignored, so this resolves fresh)
+      - name: Install packages
+        run: uv sync --extra dev
 
-      - name: Install library
-        run: |
-          uv sync
+      - name: Lint
+        run: uv run --no-sync ruff check .
+
+      - name: Check formatting
+        run: uv run --no-sync ruff format --check .
 
       - name: Run tests
-        run: |
-          uv run pytest tests
+        run: uv run --no-sync pytest tests

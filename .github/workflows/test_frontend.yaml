@@ -61,8 +61,12 @@ jobs:
       - if: runner.debug == '1'
         uses: mxschmitt/action-tmate@35b54afac29c97fb54faba5b513f8fbd1882f113 # v3.24
 
-      - name: Run test
+      - name: Run lint
         run: bun run test:lint
+
+      # test:lint skips formatting, so check it here
+      - name: Check formatting
+        run: bun run test:format
 
   # run unit tests
   test-unit:
@@ -72,7 +76,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
 
       - name: Install packages
         run: bun install
