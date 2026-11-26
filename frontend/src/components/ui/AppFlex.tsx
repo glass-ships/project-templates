@@ -28,7 +28,7 @@ const alignMap = {
 // AppFlex component
 export default function AppFlex({
   children,
-  id = "",
+  id,
   className = "",
   flow = "block",
   direction = "row",

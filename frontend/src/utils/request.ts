@@ -69,11 +69,8 @@ export const request = async <Response>(
   /** make request object */
   const request = new Request(url, options);
 
-  /** unique request id */
-  // const id = JSON.stringify(request, ["url", "method", "headers"]);
-
   /** first check if request is cached */
-  let response = cache.get(url);
+  let response = request.method === "GET" ? cache.get(url) : undefined;
 
   /** logging info */
   const cached = response ? "cached" : "new";
@@ -106,9 +103,8 @@ export const request = async <Response>(
         error = `Forbidden`;
         break;
       case 404:
-        return parseAs === "text"
-          ? ("Not found" as unknown as Response)
-          : ({ error: "Not found" } as unknown as Response);
+        error = `Not Found`;
+        break;
       case 500:
         error = `Internal Server Error`;
         break;

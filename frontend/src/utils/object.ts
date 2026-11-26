@@ -1,4 +1,4 @@
-import { merge } from "lodash";
+import merge from "lodash/merge";
 
 /** object with id field */
 type Obj = { id?: string };

@@ -5,8 +5,10 @@
  * TODO: add tooltip
  */
 import type React from "react";
+import { useContext } from "react";
 import styles from "./AppButton.module.scss";
 import AppIcon, { type AppIconProps } from "./AppIcon";
+import { LinkContext } from "./LinkContext";
 
 // import { copyToClipboard } from "@/utils/string";
 
@@ -32,7 +34,7 @@ export type AppButtonProps = AppButtonBaseProps &
   ({ text: string; ariaLabel?: string } | { text?: string; ariaLabel: string });
 
 export default function AppButton({
-  id = "",
+  id,
   color = "primary",
   design = "normal",
   type = "button",
@@ -46,10 +48,11 @@ export default function AppButton({
   onClick = undefined,
   onKeyDown = undefined,
 }: AppButtonProps) {
+  const Anchor = useContext(LinkContext);
   const buttonClass = `${styles.button} ${styles[color]} ${styles[design]} ${text ? styles.text : ""}`;
   const iconArgs: AppIconProps = {
     icon,
-    color: iconColor,
+    color: iconColor ?? "currentColor", // match the button text in both themes
     size: text ? "tiny" : "small",
   };
 
@@ -63,28 +66,14 @@ export default function AppButton({
 
   if (type === "link" || linkTo !== "") {
     return (
-      <a id={id} href={linkTo} target={newTab ? "_blank" : "_self"} aria-label={ariaLabel} className={buttonClass}>
+      <Anchor id={id} href={linkTo} target={newTab ? "_blank" : "_self"} aria-label={ariaLabel} className={buttonClass}>
         {content}
-      </a>
-    );
-  } else if (type === "button") {
-    return (
-      <button
-        id={id}
-        type="button"
-        onClick={onClick}
-        onKeyDown={onKeyDown}
-        aria-label={ariaLabel}
-        className={buttonClass}
-      >
-        {content}
-      </button>
-    );
-  } else if (type === "submit") {
-    return (
-      <button id={id} type="submit" aria-label={ariaLabel} className={buttonClass}>
-        {content}
-      </button>
+      </Anchor>
     );
   }
+  return (
+    <button id={id} type={type} onClick={onClick} onKeyDown={onKeyDown} aria-label={ariaLabel} className={buttonClass}>
+      {content}
+    </button>
+  );
 }

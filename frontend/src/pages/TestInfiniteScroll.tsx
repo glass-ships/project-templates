@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AppButton from "@/components/ui/AppButton";
 import AppInfiniteScroll from "@/components/ui/AppInfiniteScroll";
 import AppSection from "@/components/ui/AppSection";
 
@@ -15,6 +16,8 @@ export default function TestInfiniteScroll() {
       <AppSection width="full">
         <AppInfiniteScroll hasNextPage={hasNextPage} onLoadMore={loadMore}>
           <h3>Scroll down to trigger infinite scroll...</h3>
+          {/* path + hash to another page: should land on "Hover over me too." in the Testbed, not its top */}
+          <AppButton text="Testbed tooltip" color="primary" design="small" linkTo="/#tooltip-text" />
           {items.map((item) => (
             <p key={item.id} style={{ whiteSpace: "pre-line" }}>
               {item.text}

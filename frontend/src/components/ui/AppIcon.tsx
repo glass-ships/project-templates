@@ -73,7 +73,7 @@ function getFontAwesomeIcon(iconName: string) {
 }
 
 export default function AppIcon({
-  id = "",
+  id,
   icon = "",
   size = "small",
   color,

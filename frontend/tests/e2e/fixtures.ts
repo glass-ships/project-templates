@@ -16,8 +16,8 @@ export const test = base.extend<{ errors: string[] }>({
   ],
 });
 
-/** Theme picked up by ThemeToggle on load; set before navigating. */
+/** Theme picked up by ThemeToggle on load; set before navigating. Stored as JSON, as useLocalStorage does. */
 export const setTheme = (page: Page, theme: "light" | "dark") =>
-  page.addInitScript((theme) => localStorage.setItem("theme", theme), theme);
+  page.addInitScript((theme) => localStorage.setItem("theme", JSON.stringify(theme)), theme);
 
 export { expect };

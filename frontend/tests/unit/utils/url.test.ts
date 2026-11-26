@@ -24,9 +24,11 @@ describe("isExternal", () => {
   });
 
   it("is false for the site's own domain", () => {
-    // Update along with the domain hardcoded in src/utils/url.ts
-    expect(isExternal("https://glass-ships.com/page")).toBe(false);
-    expect(isExternal("https://docs.glass-ships.com/page")).toBe(false);
+    expect(isExternal(`${window.location.origin}/page`)).toBe(false);
+  });
+
+  it("is true for subdomains of the site", () => {
+    expect(isExternal(`https://docs.${window.location.hostname}/page`)).toBe(true);
   });
 });
 

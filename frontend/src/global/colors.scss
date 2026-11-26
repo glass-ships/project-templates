@@ -1,3 +1,30 @@
+/** ====================================
+Colors from the ORNL Branding guidelines 
+======================================== */
+
+/* Primary colors */
+$green: #00662c;
+$blue: #00454d;
+$white: #ffffff;
+$grey: #dbdcdb;
+$black: #373a36;
+
+/* Secondary colors */
+$secondary-aqua: #00bdb5;
+$secondary-biome: #00b38f;
+$secondary-energy: #7dba00;
+$secondary-hydro: #005776;
+$secondary-infinity: #006ba6;
+$secondary-mist: #8bfebf;
+
+/* Accent colors */
+$accent-forge: #ff9e1b;
+$accent-plasma: #b50094;
+$accent-pulsar: #4e008e;
+$accent-spark: #fe5000;
+
+/** ==================================== */
+
 /** DISCORD_COLORS */
 $grey-darkest: oklch(0.18 0.01 270);
 $grey-darker: oklch(0.23 0.01 270);
@@ -9,9 +36,9 @@ $blue: oklch(0.58 0.19 270);
 /** CP77 */
 $raisin_black: oklch(0.21 0.02 280);
 $blood_red: oklch(0.29 0.16 29);
-$yellow: oklch(0.89 0.20 102);
-$cyan_keppel: oklch(0.70 0.14 180);
-$blue_electric: oklch(0.56 0.20 264);
+$yellow: oklch(0.89 0.2 102);
+$cyan_keppel: oklch(0.7 0.14 180);
+$blue_electric: oklch(0.56 0.2 264);
 $purple: oklch(0.57 0.19 296);
 $pink_frostbite: oklch(0.67 0.24 328);
 $steel_pink: oklch(0.55 0.29 318);

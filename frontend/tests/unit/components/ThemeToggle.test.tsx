@@ -10,17 +10,17 @@ const stubPrefersLight = (prefersLight: boolean) =>
   );
 
 const html = document.documentElement;
-const getCheckbox = () => screen.getByRole("checkbox") as HTMLInputElement;
+const getToggle = () => screen.getByRole("button", { name: "Light theme" });
 
 describe("ThemeToggle", () => {
   it("uses the saved theme", () => {
     stubPrefersLight(false);
-    localStorage.setItem("theme", "light");
+    localStorage.setItem("theme", JSON.stringify("light"));
 
     render(<ThemeToggle />);
 
     expect(html).toHaveClass("light");
-    expect(getCheckbox().checked).toBe(true);
+    expect(getToggle()).toHaveAttribute("aria-pressed", "true");
   });
 
   it("falls back to the system preference when nothing is saved", () => {
@@ -36,29 +36,47 @@ describe("ThemeToggle", () => {
     render(<ThemeToggle />);
 
     expect(html).toHaveClass("dark");
-    expect(getCheckbox().checked).toBe(false);
+    expect(getToggle()).toHaveAttribute("aria-pressed", "false");
   });
 
   it("switches and saves the theme on click", async () => {
     stubPrefersLight(false);
     render(<ThemeToggle />);
 
-    await userEvent.click(getCheckbox());
+    await userEvent.click(getToggle());
     expect(html).toHaveClass("light");
     expect(html).not.toHaveClass("dark");
-    expect(localStorage.getItem("theme")).toBe("light");
+    expect(localStorage.getItem("theme")).toBe('"light"');
 
-    await userEvent.click(getCheckbox());
+    await userEvent.click(getToggle());
     expect(html).toHaveClass("dark");
-    expect(localStorage.getItem("theme")).toBe("dark");
+    expect(html).not.toHaveClass("light");
+    expect(localStorage.getItem("theme")).toBe('"dark"');
   });
 
-  it("can be toggled through its label", async () => {
+  it("toggles with Enter", async () => {
     stubPrefersLight(false);
     render(<ThemeToggle />);
 
-    await userEvent.click(screen.getByText("Toggle"));
+    getToggle().focus();
+    await userEvent.keyboard("{Enter}");
 
     expect(html).toHaveClass("light");
+  });
+
+  it("works when storage is blocked", async () => {
+    stubPrefersLight(true);
+    const blocked = () => {
+      throw new DOMException("blocked", "SecurityError");
+    };
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(blocked);
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(blocked);
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    render(<ThemeToggle />);
+    expect(html).toHaveClass("light");
+
+    await userEvent.click(getToggle());
+    expect(html).toHaveClass("dark");
   });
 });

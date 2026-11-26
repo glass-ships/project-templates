@@ -1,8 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Route, Routes } from "react-router";
 import { describe, expect, it, vi } from "vitest";
+import RouterLink from "@/components/RouterLink";
 import AppButton from "@/components/ui/AppButton";
 import styles from "@/components/ui/AppButton.module.scss";
+import { LinkContext } from "@/components/ui/LinkContext";
 import "@/global/icons";
 
 describe("AppButton", () => {
@@ -51,6 +54,23 @@ describe("AppButton", () => {
     expect(screen.getByRole("link", { name: "Source code" })).toHaveAttribute("href", "/source");
   });
 
+  it("renders links with the component from LinkContext, so a router can navigate without a reload", async () => {
+    render(
+      <MemoryRouter>
+        <LinkContext value={RouterLink}>
+          <Routes>
+            <Route path="/" element={<AppButton text="Docs" linkTo="/docs" />} />
+            <Route path="/docs" element={<h1>Docs page</h1>} />
+          </Routes>
+        </LinkContext>
+      </MemoryRouter>,
+    );
+
+    await userEvent.click(screen.getByRole("link", { name: "Docs" }));
+
+    expect(screen.getByRole("heading", { name: "Docs page" })).toBeInTheDocument();
+  });
+
   it("opens links in a new tab when newTab is set", () => {
     render(<AppButton text="Docs" type="link" linkTo="https://example.com" newTab />);
     expect(screen.getByRole("link")).toHaveAttribute("target", "_blank");
@@ -68,6 +88,15 @@ describe("AppButton", () => {
 
     expect(screen.getByRole("button")).toHaveAttribute("type", "submit");
     expect(onSubmit).toHaveBeenCalledOnce();
+  });
+
+  it("calls onClick on submit buttons too", async () => {
+    const onClick = vi.fn();
+    render(<AppButton text="Send" type="submit" onClick={onClick} />);
+
+    await userEvent.click(screen.getByRole("button"));
+
+    expect(onClick).toHaveBeenCalledOnce();
   });
 
   it("places the icon after the text by default and before it when iconPosition is left", () => {
@@ -88,5 +117,10 @@ describe("AppButton", () => {
     const button = screen.getByRole("button", { name: "Menu" });
     expect(button.querySelector('svg[data-icon="bars"]')).not.toBeNull();
     expect(button).not.toHaveClass(styles.text);
+  });
+
+  it("colors the icon like the button text unless iconColor is set", () => {
+    render(<AppButton icon="bars" ariaLabel="Menu" />);
+    expect(screen.getByRole("button").querySelector("svg")).toHaveAttribute("color", "currentColor");
   });
 });

@@ -1,6 +1,8 @@
-import { debounce, sortBy } from "lodash";
+import debounce from "lodash/debounce";
+import sortBy from "lodash/sortBy";
 import { useEffect } from "react";
 
+import useMediaQuery from "@/hooks/useMediaQuery";
 import type { Point2d, Point3d } from "@/utils/math";
 import { cos, dist, getMidpoint, project, sin } from "@/utils/math";
 import style from "./Nexus.module.scss";
@@ -127,6 +129,9 @@ const generateField = debounce(() => {
 
   /** eliminate dots with no links */
   dots = dots.filter((dot) => links.find(({ from, to }) => dot === from || dot === to));
+
+  /** draw once, so the field shows even without the animation loop */
+  step();
 }, 50);
 
 /** rotate 3d world */
@@ -238,6 +243,8 @@ function step() {
 }
 
 export default function Nexus() {
+  const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+
   useEffect(() => {
     // setup canvas
     canvas = document.querySelector("#nexus");
@@ -258,8 +265,9 @@ export default function Nexus() {
     };
   }, []);
 
-  // event listeners
+  // motion: pointer tilt, click pulse, animation loop and auto pulse
   useEffect(() => {
+    if (reduceMotion) return;
     const handleMouseMove = (event: MouseEvent) => rotate(event);
     const handleTouchMove = (event: TouchEvent) => rotate(event);
     const handleMouseDown = () => pulse();
@@ -267,27 +275,19 @@ export default function Nexus() {
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("touchmove", handleTouchMove);
     document.addEventListener("mousedown", handleMouseDown);
+    const stepInterval = setInterval(step, 1000 / 60);
+    const pulseInterval = setInterval(pulse, 5000);
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("mousedown", handleMouseDown);
-    };
-  }, []);
-
-  // intervals
-  useEffect(() => {
-    const stepInterval = setInterval(step, 1000 / 60);
-    // const pulseInterval = setInterval(pulse, 10000);
-    const pulseInterval = setInterval(pulse, 5000);
-
-    return () => {
       clearInterval(stepInterval);
       clearInterval(pulseInterval);
       for (const id of pulseTimers) clearTimeout(id);
       pulseTimers.clear();
     };
-  }, []);
+  }, [reduceMotion]);
 
   return <canvas id="nexus" className={style.nexus} />;
 }

@@ -58,6 +58,25 @@ test.describe("Testbed (/)", () => {
     await expect(page).toHaveURL("/nexus");
     await expect(page.locator("canvas#nexus")).toBeVisible();
   });
+
+  test("scrolls to the target of a hash link", async ({ page }) => {
+    await page.getByRole("link", { name: "Hash link" }).click();
+    await expect(page).toHaveURL("/#test-icons");
+    await expect(page.locator("#test-icons")).toBeInViewport();
+  });
+
+  test("opens the next page at the top, not at this page's scroll position", async ({ page }) => {
+    await page.getByRole("link", { name: "Infinite Scroll" }).click(); // the button is far down, so the Testbed is scrolled
+    await expect(page).toHaveURL("/infinite-scroll");
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  });
+
+  test("opens same-site files instead of the 404 page", async ({ page }) => {
+    await page.getByRole("link", { name: "Static file" }).click();
+    await expect(page).toHaveURL("/images/favicon.ico");
+    // the browser loaded the file itself, so the app (and its navbar) is gone
+    await expect(page.getByRole("navigation")).toHaveCount(0);
+  });
 });
 
 test.describe("theme", () => {
@@ -72,12 +91,20 @@ test.describe("theme", () => {
     await page.goto("/");
     await expect(page.locator("html")).toHaveClass(/\bdark\b/);
 
-    await page.getByText("Toggle", { exact: true }).click();
+    await page.getByRole("button", { name: "Light theme" }).click();
     await expect(page.locator("html")).toHaveClass(/\blight\b/);
 
     // addInitScript re-runs on reload, so check storage rather than reloading.
-    expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("light");
+    expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe('"light"');
   });
+});
+
+// a page whose content is all there on first render; see the shortcut on ScrollToHash
+test("scrolls to the #hash target after moving to another page", async ({ page }) => {
+  await page.goto("/infinite-scroll");
+  await page.getByRole("link", { name: "Testbed tooltip" }).click();
+  await expect(page).toHaveURL("/#tooltip-text");
+  await expect(page.locator("#tooltip-text")).toBeInViewport();
 });
 
 test("nexus page draws its canvas", async ({ page }) => {
@@ -91,7 +118,10 @@ test("unknown routes show the 404 page with a way home", async ({ page }) => {
   await page.goto("/does-not-exist");
   await expect(page.getByRole("heading", { name: "Page Not Found" })).toBeVisible();
 
+  // a flag on window survives router navigation but not a page reload
+  await page.evaluate(() => Object.assign(window, { noReload: true }));
   await page.getByRole("link", { name: "Return to Home" }).click();
   await expect(page).toHaveURL("/");
   await expect(page.getByRole("heading", { name: "Testbed", level: 1 })).toBeVisible();
+  expect(await page.evaluate(() => "noReload" in window)).toBe(true);
 });

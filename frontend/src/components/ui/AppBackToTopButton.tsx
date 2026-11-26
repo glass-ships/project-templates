@@ -17,26 +17,19 @@ const AppBackToTopButton: React.FC<AppBackToTopButtonProps> = ({
   label, //= "Back to top",
   ariaLabel = "Back to top",
 }) => {
-  const [scrollY, setScrollY] = useState(0);
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  // only the boolean is state, so scrolling re-renders only when the button appears or hides
+  const [show, setShow] = useState(false);
 
-  // Custom hooks equivalent to @vueuse/core
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    const handleResize = () => setWindowHeight(window.innerHeight);
-
-    // Event listeners
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup
+    const update = () => setShow(window.scrollY > window.innerHeight * thresholdVH);
+    update(); // the page may already be scrolled (reload, back button)
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
     };
-  }, []);
-
-  const show = scrollY > windowHeight * thresholdVH;
+  }, [thresholdVH]);
 
   // Smooth scroll to anchor or page top
   const scrollTop = () => {

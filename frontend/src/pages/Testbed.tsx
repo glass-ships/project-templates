@@ -6,15 +6,14 @@ import AppCodeBlock from "@/components/ui/AppCodeBlock";
 import AppFlex from "@/components/ui/AppFlex";
 import AppGrid from "@/components/ui/AppGrid";
 import AppIcon from "@/components/ui/AppIcon";
+import AppModal from "@/components/ui/AppModal";
 import AppSection from "@/components/ui/AppSection";
 import faIcons from "@/global/icons";
 import "@/global/styles.scss";
-import { lazy, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-tooltip";
 import styles from "./TestBed.module.scss";
-
-const Modal = lazy(() => import("@/components/ui/AppModal"));
 
 // Get filenames of custom icons in /src/assets/icons
 const customIconsImport = import.meta.glob("/src/assets/icons/*.svg");
@@ -27,17 +26,7 @@ for (const path in customIconsImport) {
   }
 }
 const icons: string[] = ["not-an-icon", ...Object.keys(customIcons), ...Object.keys(faIcons)];
-// console.log({ icons });
 
-// Split icons into groups for different sizes
-const groups: string[][] = [];
-const groupCount = 4;
-const chunkSize = Math.ceil(icons.length / groupCount);
-for (let i = 0; i < groupCount; i++) {
-  const start = i * chunkSize;
-  const end = start + chunkSize;
-  groups.push(icons.slice(start, end));
-}
 const sizeGroups = ["large", "medium", "small", "tiny"] as const;
 
 const colorGroups = {
@@ -70,18 +59,18 @@ function TestButtons() {
   };
   return (
     <AppSection width="big" height="auto">
-      <Modal isOpen={isOpen} toggle={toggleDialog}>
+      <AppModal isOpen={isOpen} toggle={toggleDialog}>
         <h1>Test Modal</h1>
-      </Modal>
+      </AppModal>
       {/* Escape and backdrop clicks do nothing; only the Close button closes it */}
-      <Modal isOpen={isLockedOpen} toggle={() => {}}>
+      <AppModal isOpen={isLockedOpen} toggle={() => {}}>
         <h1>Locked Modal</h1>
         <AppButton text="Close" color="primary" onClick={() => setIsLockedOpen(false)} />
-      </Modal>
+      </AppModal>
       <AppCard>
         <h3>Test AppButtons</h3>
         <AppFlex>
-          {/* normal */}
+          {/* normal: click handlers */}
           <AppFlex direction="row">
             <AppButton text="Toast Success" color="primary" onClick={() => toast.success("Button 1 clicked")} />
             <AppButton
@@ -91,43 +80,65 @@ function TestButtons() {
               iconPosition="left"
               onClick={() => toast.error("Button 2 clicked")}
             />
+            {/* in-app path with no route: should show the 404 page */}
             <AppButton type="link" text="Broken link" icon="vial" color="tertiary" linkTo="/doesnotexist" />
             <AppButton text="Test modal" icon="vial" color="none" onClick={() => setIsOpen(true)} />
             <AppButton text="Test locked modal" icon="vial" color="none" onClick={() => setIsLockedOpen(true)} />
-            <AppButton
-              icon="vial"
-              iconColor="white"
-              ariaLabel="Icon button"
-              onClick={() => console.log("Button 5 clicked")}
-            />
+            <AppButton icon="vial" ariaLabel="Icon button" onClick={() => toast.info("Icon button clicked")} />
           </AppFlex>
-          {/* circle */}
+          {/* circle: links */}
           <AppFlex>
-            <AppButton text="Circle 1" color="primary" design="circle" onClick={() => console.log("Icon clicked")} />
+            <AppButton text="External link" color="primary" design="circle" linkTo="https://example.com" />
             <AppButton
-              text="Circle 2"
+              text="New tab"
               color="secondary"
               design="circle"
-              icon="vial"
+              icon="arrow-up-right-from-square"
               iconPosition="left"
-              onClick={() => console.log("Icon clicked")}
+              linkTo="https://example.com"
+              newTab
             />
             <AppButton text="Link to nexus" color="tertiary" design="circle" icon="vial" linkTo="/nexus" />
             <AppButton icon="vial" text="Infinite Scroll" color="none" design="circle" linkTo="/infinite-scroll" />
-            <AppButton design="circle" icon="vial" iconColor="white" ariaLabel="Circle icon button" />
+            <AppButton design="circle" icon="envelope" ariaLabel="Email" linkTo="mailto:someone@example.com" />
           </AppFlex>
-          {/* small */}
+          {/* small: link edge cases, keyboard and form submit */}
           <AppFlex>
+            {/* should scroll to the Test Icons section */}
+            <AppButton text="Hash link" color="primary" design="small" linkTo="#test-icons" />
+            {/* same-site file the app has no route for: should open the icon, not the 404 page */}
             <AppButton
-              text="Small 1"
-              color="primary"
+              text="Static file"
+              color="secondary"
               design="small"
-              onClick={() => console.log("Sm button 1 clicked")}
+              icon="file-arrow-down"
+              iconPosition="left"
+              linkTo="/images/favicon.ico"
             />
-            <AppButton text="Small 2" color="secondary" design="small" icon="vial" iconPosition="left" />
-            <AppButton text="Small 3" color="tertiary" design="small" icon="vial" />
-            <AppButton text="Small 4" icon="vial" color="none" design="small" />
-            <AppButton design="small" icon="vial" iconColor="white" ariaLabel="Small icon button" />
+            <AppButton
+              text="Key down"
+              color="tertiary"
+              design="small"
+              icon="vial"
+              onKeyDown={(event) => toast.info(`Key: ${event.key}`)}
+            />
+            {/* should show both toasts: the button's onClick, then the form's onSubmit */}
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                toast.success("Form submitted");
+              }}
+            >
+              <AppButton
+                text="Submit"
+                type="submit"
+                icon="vial"
+                color="none"
+                design="small"
+                onClick={() => toast.info("Submit button clicked")}
+              />
+            </form>
+            <AppButton design="small" icon="vial" ariaLabel="Home" type="link" linkTo="/" />
           </AppFlex>
         </AppFlex>
       </AppCard>
@@ -173,7 +184,7 @@ function TestGrid() {
 
 function TestIcons() {
   return (
-    <AppSection width="medium" height="auto">
+    <AppSection width="medium" height="auto" id="test-icons">
       <AppCard>
         <h3>Test Icons</h3>
         {sizeGroups.map((groupSize, gidx) => (

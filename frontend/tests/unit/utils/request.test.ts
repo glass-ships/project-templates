@@ -70,9 +70,21 @@ describe("request", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  it("sends a POST even when a GET to the same url is cached", async () => {
+    const path = uniquePath("get-then-post");
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ from: "get" }))
+      .mockResolvedValueOnce(jsonResponse({ from: "post" }));
+
+    await request(path);
+    await expect(request(path, {}, { method: "POST" })).resolves.toEqual({ from: "post" });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it.each([
     [401, "Unauthorized"],
     [403, "Forbidden"],
+    [404, "Not Found"],
     [500, "Internal Server Error"],
     [502, "Bad Gateway"],
     [503, "Service Unavailable"],
@@ -89,12 +101,6 @@ describe("request", () => {
 
     await expect(request(path)).rejects.toThrow("Internal Server Error");
     await expect(request(path)).resolves.toEqual({ recovered: true });
-  });
-
-  it("returns a not-found value instead of throwing on 404", async () => {
-    fetchMock.mockResolvedValue(jsonResponse({}, 404));
-    await expect(request(uniquePath("missing-json"))).resolves.toEqual({ error: "Not found" });
-    await expect(request(uniquePath("missing-text"), {}, {}, "text")).resolves.toBe("Not found");
   });
 
   it("throws when the body cannot be parsed", async () => {
