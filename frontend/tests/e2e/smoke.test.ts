@@ -29,6 +29,17 @@ test.describe("Testbed (/)", () => {
     await expect(dialog).toBeHidden();
   });
 
+  test("returns focus to the button that opened the modal", async ({ page }) => {
+    const opener = page.getByRole("button", { name: "Test modal", exact: true });
+    await opener.focus();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("dialog")).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toBeHidden();
+    await expect(opener).toBeFocused();
+  });
+
   test("lets the page scroll again after the modal closes", async ({ page }) => {
     await page.getByRole("button", { name: "Test modal" }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
@@ -146,6 +157,20 @@ test("nexus page draws its canvas", async ({ page }) => {
       }),
     )
     .toBeGreaterThan(0);
+});
+
+test("loads the fonts from the page head, not from an @import in the CSS", async ({ page }) => {
+  await page.goto("/");
+  // an @import'd stylesheet holds back the CSS that imports it, so nothing paints until it loads
+  // (only this site's sheets: the browser hides the rules of the fonts sheet, which is from another site)
+  const imports = await page.evaluate(
+    () =>
+      [...document.styleSheets]
+        .filter((sheet) => !sheet.href || new URL(sheet.href).origin === location.origin)
+        .flatMap((sheet) => [...sheet.cssRules].filter((rule) => rule instanceof CSSImportRule)).length,
+  );
+  expect(imports).toBe(0);
+  await expect(page.locator("link[rel=stylesheet][href*='fonts.googleapis.com']")).toHaveCount(1);
 });
 
 test("unknown routes show the 404 page with a way home", async ({ page }) => {

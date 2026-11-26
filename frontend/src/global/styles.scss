@@ -1,10 +1,6 @@
 @use "variables" as v;
 @use "normalize.css";
 
-// fonts for $sans and $mono in _variables.scss; here, not there, so the built CSS has them once
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap");
-
 // <html> element
 :root {
   color-scheme: light dark;

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import styles from "./AppModal.module.scss";
 
@@ -16,14 +16,22 @@ type ModalProps = {
 
 export default function AppModal(props: ModalProps) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
+  // open in the ref, and close() in its cleanup while the dialog is still in the page,
+  // so the browser returns focus to whatever opened it
+  const setModalRef = useCallback((el: HTMLDialogElement | null) => {
+    if (!el) return;
+    modalRef.current = el;
+    if (!el.open) el.showModal();
+    return () => {
+      if (el.open) el.close();
+      modalRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     if (!props.isOpen) return;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    if (modalRef.current && !modalRef.current.open) {
-      modalRef.current.showModal();
-    }
     // Reset body overflow when modal is closed and on unmount
     return () => {
       document.body.style.overflow = prevOverflow;
@@ -63,7 +71,7 @@ export default function AppModal(props: ModalProps) {
 
   return props.isOpen ? (
     <dialog
-      ref={modalRef}
+      ref={setModalRef}
       className={styles.modalBackdrop}
       // Never let the browser close the dialog itself: only the parent's isOpen decides
       onCancel={(event) => event.preventDefault()}
