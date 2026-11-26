@@ -15,6 +15,7 @@ const { firstInView, restartAnimations, safeDocument, truncateBySize, waitFor } 
 
 afterEach(() => {
   vi.useRealTimers();
+  // before setup.ts clears document.body: one test stubs document as undefined
   vi.unstubAllGlobals();
 });
 

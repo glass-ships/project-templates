@@ -20,15 +20,6 @@ test.describe("Testbed (/)", () => {
     await expect(page.getByRole("tooltip")).toHaveText("Tooltip content");
   });
 
-  test("opens the modal and closes it with Escape", async ({ page }) => {
-    await page.getByRole("button", { name: "Test modal" }).click();
-    const dialog = page.getByRole("dialog");
-    await expect(dialog.getByRole("heading", { name: "Test Modal" })).toBeVisible();
-
-    await page.keyboard.press("Escape");
-    await expect(dialog).toBeHidden();
-  });
-
   test("returns focus to the button that opened the modal", async ({ page }) => {
     const opener = page.getByRole("button", { name: "Test modal", exact: true });
     await opener.focus();

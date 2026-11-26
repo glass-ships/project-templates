@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { useState } from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import AppInfiniteScroll from "@/components/ui/AppInfiniteScroll";
 
 /** whether the sentinel is in view; read by FakeObserver like a real observer reads the layout */
@@ -63,10 +63,6 @@ describe("AppInfiniteScroll", () => {
     inView = false;
     FakeObserver.instances = [];
     vi.stubGlobal("IntersectionObserver", FakeObserver);
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
   });
 
   it("renders its children", () => {
