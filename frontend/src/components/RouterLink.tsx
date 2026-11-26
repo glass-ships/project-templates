@@ -14,7 +14,7 @@ const isNative = (href: string) => {
   return href.startsWith("#") || /\.\w+$/.test(path) || SERVER_PATHS.some((prefix) => path.startsWith(prefix));
 };
 
-/** lets AppButton links navigate through the router, without a reload (provided via LinkContext in main.tsx) */
+/** Lets AppButton links navigate through the router, without a page reload (provided via LinkContext in main.tsx). */
 export default function RouterLink({ href = "", ...props }: ComponentProps<"a">) {
   return isNative(href) ? <a href={href} {...props} /> : <Link to={href} {...props} />;
 }

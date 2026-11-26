@@ -17,11 +17,16 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
         Logging is commented out in the body: uncomment what you need.
 
-        Args:
-            request: The incoming request.
-            call_next: Passes the request to the next middleware or the route.
+        Parameters
+        ----------
+        request : Request
+            The incoming request.
+        call_next : RequestResponseEndpoint
+            Passes the request to the next middleware or the route.
 
-        Returns:
+        Returns
+        -------
+        Response
             The response.
         """
         # Log request method and URL

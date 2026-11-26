@@ -12,7 +12,7 @@
   ],
   "out": "../../docs/frontend/api",
   "cleanOutputDir": true,
-  "plugin": ["typedoc-plugin-markdown", "./names.mjs"],
+  "plugin": ["typedoc-plugin-markdown", "./plugin.mjs"],
   "readme": "none",
   "excludePrivate": true,
   "treatWarningsAsErrors": true,
@@ -26,6 +26,8 @@
   "entryFileName": "index.md",
   "hidePageHeader": true,
   "hideBreadcrumbs": true,
+  // no "Functions" / "Interfaces" headings: each page is one file, its title already says what it is
+  "hideGroupHeadings": true,
   "useCodeBlocks": true,
   "parametersFormat": "table",
   "interfacePropertiesFormat": "table",

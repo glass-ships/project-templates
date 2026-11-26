@@ -37,4 +37,4 @@ uv run --project python zensical build --strict -f docs/zensical.toml  # builds 
 
 `make docs` runs the generate and build steps, and `make docs-serve` the generate and preview steps.
 
-`--strict` stops the build on warnings such as broken links, as CI does.
+`--strict` stops the build on warnings such as broken links, as CI does. Add `--clean` after changing Python docstrings: the build cache only notices changes to the pages, so without it the Python API reference can be out of date.

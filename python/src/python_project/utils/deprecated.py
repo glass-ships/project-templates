@@ -9,14 +9,17 @@ import warnings
 def deprecated(message: str):
     """Decorator that marks a function as deprecated: each call emits a DeprecationWarning.
 
-    Args:
-        message: The warning message, e.g. "Use new_function instead."
+    Parameters
+    ----------
+    message : str
+        The warning message, e.g. "Use new_function instead."
 
-    Example:
-        ```python
-        @deprecated("Use new_function instead.")
-        def old_function(): ...
-        ```
+    Examples
+    --------
+    ```python
+    @deprecated("Use new_function instead.")
+    def old_function(): ...
+    ```
     """
 
     def decorator(func):

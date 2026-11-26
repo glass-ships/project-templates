@@ -40,12 +40,14 @@ install-frontend: ## Install frontend
 .PHONY: docs
 docs: ## Build the docs site into docs/site/ (generates the frontend API reference first)
 	cd frontend && bun run docs
-	$(RUN) zensical build --strict -f docs/zensical.toml
+	# --clean: the cache only tracks the pages, so it misses docstring changes in the Python code
+	$(RUN) zensical build --strict --clean -f docs/zensical.toml
 
 
 .PHONY: docs-serve
 docs-serve: ## Preview the docs site at http://localhost:8000
 	cd frontend && bun run docs
+	rm -rf docs/.cache # see docs: serve has no --clean
 	$(RUN) zensical serve -f docs/zensical.toml
 
 ### Testing ###

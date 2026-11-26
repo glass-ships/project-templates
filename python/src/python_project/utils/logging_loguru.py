@@ -122,16 +122,23 @@ def setup_logging(
 ):
     """Configure loguru with a custom format and optional rotating file sink.
 
-    Args:
-        level: The default level: "DEBUG", "INFO", "WARNING", "ERROR" or "CRITICAL".
-        rotate: If True, add a file sink that rotates logs at midnight and keeps `num_backups` old files.
-        num_backups: The number of old log files to keep. Only used if `rotate` is True.
-        log_file: Path of the rotating log file (default: ~/PROJECT_NAME.log). Missing parent
-            directories are created. Only used if `rotate` is True.
-        reset_handlers: If True, remove all existing loguru sinks (including loguru's default stderr
-            sink) before adding new ones. This prevents duplicate logs if setup_logging is called more than once.
-        logger_levels: Per-module level overrides, e.g. {"discord": "WARNING", "my_package": "DEBUG"}.
-            These may be more or less verbose than `level`.
+    Parameters
+    ----------
+    level : {"INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL"}
+        The default level.
+    rotate : bool
+        If True, add a file sink that rotates logs at midnight and keeps `num_backups` old files.
+    num_backups : int
+        The number of old log files to keep. Only used if `rotate` is True.
+    log_file : str | Path | None
+        Path of the rotating log file (default: ~/PROJECT_NAME.log). Missing parent
+        directories are created. Only used if `rotate` is True.
+    reset_handlers : bool
+        If True, remove all existing loguru sinks (including loguru's default stderr sink)
+        before adding new ones. This prevents duplicate logs if setup_logging is called more than once.
+    logger_levels : Mapping[str, str | int] | None
+        Per-module level overrides, e.g. {"discord": "WARNING", "my_package": "DEBUG"}.
+        These may be more or less verbose than `level`.
     """
     _level_filter.clear()
     _level_filter[""] = level
@@ -166,11 +173,16 @@ def setup_logging(
 def add_log_fh(log_file: str | Path, mode: Literal["w", "a"] = "w") -> int:
     """Add a file sink, replacing any existing one for the same file.
 
-    Args:
-        log_file: Path to the log file. Missing parent directories are created.
-        mode: "w" to overwrite the file (default) or "a" to append to it.
+    Parameters
+    ----------
+    log_file : str | Path
+        Path to the log file. Missing parent directories are created.
+    mode : {"w", "a"}
+        "w" to overwrite the file (default) or "a" to append to it.
 
-    Returns:
+    Returns
+    -------
+    int
         The loguru sink id that was added.
     """
 
@@ -189,10 +201,14 @@ def add_log_fh(log_file: str | Path, mode: Literal["w", "a"] = "w") -> int:
 def remove_log_fh(log_file: str | Path) -> int:
     """Close and remove the file sink added by `add_log_fh` for the given log_file.
 
-    Args:
-        log_file: Path to the log file.
+    Parameters
+    ----------
+    log_file : str | Path
+        Path to the log file.
 
-    Returns:
+    Returns
+    -------
+    int
         The number of sinks removed: 1, or 0 if there was none.
     """
 
@@ -210,11 +226,16 @@ def log_to_file(log_file: str | Path, mode: Literal["w", "a"] = "w") -> Iterator
 
     The sink is removed when the context exits, even if an exception occurs.
 
-    Args:
-        log_file: Path to the log file. Missing parent directories are created.
-        mode: "w" to overwrite the file (default) or "a" to append to it.
+    Parameters
+    ----------
+    log_file : str | Path
+        Path to the log file. Missing parent directories are created.
+    mode : {"w", "a"}
+        "w" to overwrite the file (default) or "a" to append to it.
 
-    Yields:
+    Yields
+    ------
+    int
         The loguru sink id that was added.
     """
 

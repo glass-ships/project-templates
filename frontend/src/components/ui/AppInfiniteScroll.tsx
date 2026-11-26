@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-export type InfiniteScrollProps = {
+export type AppInfiniteScrollProps = {
   children: React.ReactNode;
   /** Whether there are more pages. Loading stops when it's false. */
   hasNextPage: boolean;
@@ -25,14 +25,13 @@ export type InfiniteScrollProps = {
  * </AppInfiniteScroll>
  * ```
  */
-
-export default function InfiniteScroll({
+export default function AppInfiniteScroll({
   children,
   hasNextPage,
   onLoadMore,
   loading = false,
   threshold = 100,
-}: InfiniteScrollProps) {
+}: AppInfiniteScrollProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   // Runs after every render with a new observer, because an observer's first report is where the

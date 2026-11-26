@@ -15,22 +15,30 @@ def profile(
     Based on the profile decorator by Giampaolo Rodola:
     http://code.activestate.com/recipes/577817-profile-decorator/
 
-    Args:
-        output_file: File to write the stats to. Defaults to `<function name>.prof`.
-        sort_by: How to sort the stats: a string or `pstats.SortKey`, or a list of them. See
-            https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats
-        lines_to_print: Number of lines to print, or None for all of them. Sorted by "cumulative",
-            the slowest calls come first, so a small number keeps just those.
-        strip_dirs: Whether to remove the leading path from file names, to shorten the output.
+    Parameters
+    ----------
+    output_file : str | None
+        File to write the stats to. Defaults to `<function name>.prof`.
+    sort_by : str | pstats.SortKey | list | tuple
+        How to sort the stats: a string or `pstats.SortKey`, or a list of them. See
+        https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats
+    lines_to_print : int | None
+        Number of lines to print, or None for all of them. Sorted by "cumulative",
+        the slowest calls come first, so a small number keeps just those.
+    strip_dirs : bool
+        Whether to remove the leading path from file names, to shorten the output.
 
-    Returns:
+    Returns
+    -------
+    Callable
         The decorator. The decorated function returns what the original returns.
 
-    Example:
-        ```python
-        @profile(lines_to_print=20)
-        def slow_function(): ...
-        ```
+    Examples
+    --------
+    ```python
+    @profile(lines_to_print=20)
+    def slow_function(): ...
+    ```
     """
 
     def inner(func):
