@@ -6,41 +6,36 @@ import styles from "./AppModal.module.scss";
 type ModalProps = {
   children?: ReactNode;
   isOpen: boolean;
-  toggle?: () => void;
+  /**
+   * Called on Escape or a backdrop click. The parent closes the modal by setting isOpen to false.
+   * Pass `() => {}` for a modal that only the parent can close.
+   */
+  toggle: () => void;
   onKeyDown?: (e: KeyboardEvent | React.KeyboardEvent<HTMLDivElement>) => void;
 };
 
 export default function AppModal(props: ModalProps) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
-
-  const toggleModal = useCallback(() => {
-    if (props.toggle) {
-      props.toggle();
-    } else {
-      if (modalRef.current) {
-        if (modalRef.current.open) {
-          modalRef.current.close();
-          document.body.style.overflow = "";
-        } else if (!modalRef.current.open) {
-          modalRef.current.showModal();
-          document.body.style.overflow = "hidden";
-        }
-      }
-    }
-  }, [props.toggle]);
+  // open in the ref, and close() in its cleanup while the dialog is still in the page,
+  // so the browser returns focus to whatever opened it
+  const setModalRef = useCallback((el: HTMLDialogElement | null) => {
+    if (!el) return;
+    modalRef.current = el;
+    if (!el.open) el.showModal();
+    return () => {
+      if (el.open) el.close();
+      modalRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
-    if (props.isOpen && modalRef.current) {
-      document.body.style.overflow = "hidden";
-      if (!modalRef.current.open) {
-        modalRef.current.showModal();
-      }
-    } else if (modalRef.current) {
-      document.body.style.overflow = "";
-      if (modalRef.current.open) {
-        modalRef.current.close();
-      }
-    }
+    if (!props.isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    // Reset body overflow when modal is closed and on unmount
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
   }, [props.isOpen]);
 
   useEffect(() => {
@@ -50,7 +45,7 @@ export default function AppModal(props: ModalProps) {
       if (event.key === "Escape") {
         event.preventDefault();
         event.stopPropagation();
-        toggleModal();
+        props.toggle();
       }
       if (props.onKeyDown) {
         props.onKeyDown(event);
@@ -61,7 +56,7 @@ export default function AppModal(props: ModalProps) {
       if (modalRef.current && event.target === modalRef.current) {
         event.preventDefault();
         event.stopPropagation();
-        toggleModal();
+        props.toggle();
       }
     };
 
@@ -72,17 +67,15 @@ export default function AppModal(props: ModalProps) {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [props.isOpen, props.onKeyDown, toggleModal]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, []);
+  }, [props.isOpen, props.onKeyDown, props.toggle]);
 
   return props.isOpen ? (
-    <dialog ref={modalRef} className={styles.modalBackdrop}>
+    <dialog
+      ref={setModalRef}
+      className={styles.modalBackdrop}
+      // Never let the browser close the dialog itself: only the parent's isOpen decides
+      onCancel={(event) => event.preventDefault()}
+    >
       <div className={styles.modalContainer}>{props.children}</div>
     </dialog>
   ) : null;

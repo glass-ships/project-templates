@@ -1,151 +1,192 @@
 """
-This module provides utility functions for configuring and managing logging in Python applications.
-It includes functions to set up logging with a custom format, add and remove file handlers, and
-temporarily log to a file using a context manager. The logging configuration ensures that log messages
-are consistently formatted and can be directed to both the console and log files as needed.
+Custom logging setup  with optional log rotation and enhanced formatting.
+Configures the root logger to log to both console and a rotating file,
+with a custom format that includes timestamps, log levels, and source modules.
+
+Levels are set on loggers, never on handlers, so a single `setup_logging` call controls
+verbosity for both your code and third-party libraries (e.g. quieting a chatty dependency).
 
 Usage:
-```python
-from python_project.utils.logging import set_log_config, get_logger, log_to_file
 
-set_log_config(level="DEBUG")
-logger = get_logger("my_logger", level="INFO")
-with log_to_file(logger, "my_logfile.log"):
-    logger.info("This message will be logged to both the console and the file.")
-logger.info("This message will only be logged to the console.")
+In the application entry point (e.g. main.py), not in library modules:
+```python
+from PROJECT_NAME.utils.logging import setup_logging
+setup_logging(level="DEBUG", rotate=True, logger_levels={"discord": "WARNING"})
+```
+
+Then in any module, use the standard logging module to log messages:
+```python
+import logging
+logger = logging.getLogger(__name__)
+logger.info("This is an info message.")
+```
+
+To temporarily capture all log output to a file:
+```python
+from PROJECT_NAME.utils.logging import log_to_file
+with log_to_file("run.log"):
+    logger.info("Goes to the console and run.log")
 ```
 """
 
 import logging
+import logging.handlers
 import sys
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Literal
 
-FORMAT = "%(asctime)s | %(levelname)-4s | %(name)-8s | %(message)s"
-DATEFMT = "%Y-%m-%d %H:%M:%S"
-LOG_FMT = logging.Formatter(fmt=FORMAT, datefmt=DATEFMT)
-
-# Shorten level names to 4 characters for better log formatting
-logging.addLevelName(logging.DEBUG, "DBUG")
-logging.addLevelName(logging.INFO, "INFO")
-logging.addLevelName(logging.WARNING, "WARN")
-logging.addLevelName(logging.ERROR, "ERR")
-logging.addLevelName(logging.CRITICAL, "CRIT")
+LogLevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 
-def set_log_config(level: str | int = logging.INFO):
-    """Sets basic logging config and format for the root logger and all existing loggers,
-    ensuring that all log messages are printed to stdout with the same format.
+class OriginFormatter(logging.Formatter):
+    """Display the source module for root logger records."""
 
-    Parameters
-    ----------
-    level : Union[str, int], optional
-        The logging level, by default logging.INFO
+    def format(self, record):
+        record.origin = record.module if record.name == "root" else record.name
+        return super().format(record)
+
+
+def _detach_handler(handler: logging.Handler) -> None:
+    """Remove a handler from the root logger and release its resources."""
+    logging.getLogger().removeHandler(handler)
+    handler.close()
+
+
+_FMT = "%(asctime)s | %(levelname)-4s | %(origin)-12s | %(message)s"
+_DATE_FMT = "%Y-%m-%d %H:%M:%S"
+LOG_FMT = OriginFormatter(fmt=_FMT, datefmt=_DATE_FMT)
+
+
+def setup_logging(
+    level: LogLevel = "INFO",
+    rotate: bool = True,
+    num_backups: int = 15,
+    log_file: str | Path | None = None,
+    reset_handlers: bool = True,
+    logger_levels: Mapping[str, LogLevel | int] | None = None,
+):
+    """Configure logging with a custom format and optional timed rotating file handler.
+
+    Arguments
+    ---------
+    level: str
+        The logging level to set for the root logger. Options are "DEBUG", "INFO", "WARNING", "ERROR", and "CRITICAL".
+    rotate: bool
+        If True, add a TimedRotatingFileHandler that rotates logs at midnight and keeps N backups.
+    num_backups: int
+        The number of backup files to keep. Default is 15. Only relevant if `rotate` is True.
+    log_file: str | Path | None
+        Path of the rotating log file (default: ~/PROJECT_NAME.log). Missing parent directories are created.
+        Only relevant if `rotate` is True.
+    reset_handlers: bool
+        If True, remove existing handlers from the root logger before adding new ones.
+        This prevents duplicate logs if setup_logging is called multiple times.
+    logger_levels: Mapping[str, str | int] | None
+        Per-logger level overrides, e.g. {"discord": "WARNING", "my_package": "DEBUG"}.
+        These may be more or less verbose than `level`, since handlers do not filter by level.
     """
+    root = logging.getLogger()
+    root.setLevel(level)
+    for name, logger_level in (logger_levels or {}).items():
+        logging.getLogger(name).setLevel(logger_level)
 
-    logging.basicConfig(
-        format=FORMAT,
-        datefmt=DATEFMT,
-        level=level,
-        stream=sys.stdout,
-        force=True,
-    )
+    # Shorten level names to 4 characters for better log formatting
+    logging.addLevelName(logging.DEBUG, "DBUG")
+    logging.addLevelName(logging.INFO, "INFO")
+    logging.addLevelName(logging.WARNING, "WARN")
+    logging.addLevelName(logging.ERROR, "ERR")
+    logging.addLevelName(logging.CRITICAL, "CRIT")
 
-    for logger in [logging.getLogger(name) for name in logging.root.manager.loggerDict]:
-        logger.setLevel(level)
+    if reset_handlers:
+        # Remove existing handlers to prevent duplicate logs
+        for handler in root.handlers[:]:
+            _detach_handler(handler)
+
+    # Setup stream handler first, so a file handler failure below is reported in the usual format
+    sh = logging.StreamHandler(sys.stdout)
+    sh.setFormatter(LOG_FMT)
+    root.addHandler(sh)
+
+    if rotate:
+        if log_file is None:
+            log_file = Path.home() / "PROJECT_NAME.log"
+        # Setup timed rotating file handler
+        try:
+            Path(log_file).parent.mkdir(parents=True, exist_ok=True)
+            fh = logging.handlers.TimedRotatingFileHandler(
+                log_file,
+                when="midnight",
+                backupCount=num_backups,
+            )
+        except OSError as e:
+            root.error(f"Failed to create log file handler: {e}. Logging will only go to console.")
+        else:
+            fh.setFormatter(LOG_FMT)
+            root.addHandler(fh)
 
 
-def get_logger(name: str, level: str | int = logging.INFO) -> logging.Logger:
-    """Get the logger of a given name and level, adding a stream handler to stdout if none exists
+def add_log_fh(log_file: str | Path, mode: Literal["w", "a"] = "w") -> logging.FileHandler:
+    """Add a file handler to the root logger, replacing any existing one for the same file.
 
-    Parameters
-    ----------
-    name : str
-        Name of the logger to retrieve.
-    level : Union[str, int], optional
-        Logging level for the logger, by default logging.INFO"""
-
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    logger.propagate = False
-
-    if not any(isinstance(h, logging.StreamHandler) for h in logger.handlers):
-        stream_handler = logging.StreamHandler(sys.stdout)
-        stream_handler.setFormatter(LOG_FMT)
-        stream_handler.setLevel(level)
-        logger.addHandler(stream_handler)
-
-    return logger
-
-
-def add_log_fh(logger: logging.Logger, logfile: str, mode: Literal["w", "a"] = "w") -> logging.Handler:
-    """Add a file handler to a logger, replacing any existing one for the same file.
-
-    Parameters
-    ----------
-    logger : logging.Logger
-        The logger to which the file handler will be added.
-    logfile : str
-        The path to the log file. If the file or its parent directories do not exist, they will be created.
-    mode : Literal["w", "a"], optional
-        The file mode for the handler, either "w" for overwrite or "a" for append, by default "w".
+    Arguments
+    ---------
+    log_file: str | Path
+        Path to the log file. Missing parent directories are created.
+    mode: "w" | "a"
+        FileHandler mode: "w" to overwrite (default) or "a" to append.
 
     Returns
     -------
-    logging.Handler
-        The file handler that was added to the logger.
+    logging.FileHandler
+        The handler that was added.
     """
 
-    resolved_logfile = str(Path(logfile).resolve())
-    Path(resolved_logfile).parent.mkdir(parents=True, exist_ok=True)
+    resolved_log_file = Path(log_file).resolve()
+    resolved_log_file.parent.mkdir(parents=True, exist_ok=True)
 
-    # Keep only one open handler per logfile so callers can toggle logging on/off.
-    remove_log_fh(logger, resolved_logfile)
+    # Keep only one open handler per log_file so callers can toggle logging on/off.
+    remove_log_fh(resolved_log_file)
 
-    file_handler = logging.FileHandler(resolved_logfile, mode=mode)
+    file_handler = logging.FileHandler(resolved_log_file, mode=mode)
     file_handler.setFormatter(LOG_FMT)
-    file_handler.setLevel(logging.DEBUG)
-    logger.addHandler(file_handler)
-    logger.setLevel(logging.DEBUG)
+    logging.getLogger().addHandler(file_handler)
+
     return file_handler
 
 
-def remove_log_fh(logger: logging.Logger, logfile: str | None = None) -> int:
-    """Close and remove file handlers from a logger.
+def remove_log_fh(log_file: str | Path) -> int:
+    """Close and remove root logger file handlers that write to the given log_file.
 
-    If logfile is provided, only handlers for that file are removed.
     Returns the number of handlers removed.
     """
 
-    resolved_logfile = str(Path(logfile).resolve()) if logfile is not None else None
+    resolved_log_file = Path(log_file).resolve()
     removed = 0
 
-    for handler in list(logger.handlers):
+    for handler in logging.getLogger().handlers[:]:
         if not isinstance(handler, logging.FileHandler):
             continue
 
-        if (
-            resolved_logfile is not None
-            and Path(handler.baseFilename).resolve().as_posix() != Path(resolved_logfile).as_posix()
-        ):
+        if Path(handler.baseFilename).resolve() != resolved_log_file:
             continue
 
-        logger.removeHandler(handler)
-        handler.close()
+        _detach_handler(handler)
         removed += 1
 
     return removed
 
 
 @contextmanager
-def log_to_file(logger: logging.Logger, logfile: str) -> Iterator[logging.Handler]:
-    """Temporarily attach a file handler and close it on exit."""
-    original_level = logger.level
-    handler = add_log_fh(logger, logfile)
+def log_to_file(log_file: str | Path, mode: Literal["w", "a"] = "w") -> Iterator[logging.FileHandler]:
+    """Context manager to temporarily add a file handler to the root logger.
+
+    Yields the handler. It is removed when the context exits, even if an exception occurs.
+    """
+
+    handler = add_log_fh(log_file, mode=mode)
     try:
         yield handler
     finally:
-        remove_log_fh(logger, logfile)
-        logger.setLevel(original_level)
+        _detach_handler(handler)

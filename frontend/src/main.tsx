@@ -1,8 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router";
+import Navbar from "@/components/Navbar";
+import RouterLink, { ScrollToHash } from "@/components/RouterLink";
+import { LinkContext } from "@/components/ui/LinkContext";
 import NotFound from "@/pages/NotFound";
 import Testbed from "@/pages/Testbed";
+import TestInfiniteScroll from "@/pages/TestInfiniteScroll";
 import TestNexus from "@/pages/TestNexus";
 import "@/global/icons"; // Ensure icons are loaded
 
@@ -14,11 +18,24 @@ if (!rootElement) {
 createRoot(rootElement).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Testbed />} />
-        <Route path="/nexus" element={<TestNexus />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <LinkContext value={RouterLink}>
+        <Routes>
+          <Route
+            element={
+              <>
+                <ScrollToHash />
+                <Navbar />
+                <Outlet />
+              </>
+            }
+          >
+            <Route path="/" element={<Testbed />} />
+            <Route path="/infinite-scroll" element={<TestInfiniteScroll />} />
+            <Route path="/nexus" element={<TestNexus />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </LinkContext>
     </BrowserRouter>
   </StrictMode>,
 );

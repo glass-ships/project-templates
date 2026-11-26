@@ -3,6 +3,14 @@
 /** collapse whitespace in string */
 export const collapse = (value = ""): string => value.replace(/\s+/g, " ").trim();
 
+/** remove leading/trailing blank lines and the indentation shared by all non-blank lines */
+export const dedent = (value = ""): string => {
+  const lines = value.replace(/^\s*\n|\n\s*$/g, "").split("\n");
+  const indents = lines.filter((line) => line.trim()).map((line) => line.match(/^[ \t]*/)?.[0].length ?? 0);
+  const indent = indents.length ? Math.min(...indents) : 0;
+  return lines.map((line) => line.slice(indent)).join("\n");
+};
+
 /** insert html word break opportunities, for use on long strings such as urls */
 export const breakUrl = (value = ""): string =>
   /** non-alphanumeric char followed by alphanumeric char */

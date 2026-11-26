@@ -1,0 +1,86 @@
+stages:
+  - test
+  - deploy
+
+variables:
+  # inside the project dir, so GitLab can cache it
+  UV_CACHE_DIR: $CI_PROJECT_DIR/.uv-cache
+
+#######################################################################################
+### Python
+
+# uv only, no Python: uv downloads the version in UV_PYTHON
+.uv:
+  image: ghcr.io/astral-sh/uv:0.13-debian-slim
+  variables:
+    UV_PYTHON: "3.13"
+  cache:
+    key:
+      files: [python/pyproject.toml]
+    paths: [.uv-cache]
+  # the dev extra has pytest, ruff and mkdocs (uv.lock is gitignored, so this resolves fresh)
+  before_script:
+    - uv sync --extra dev --project python
+
+python:
+  extends: .uv
+  stage: test
+  parallel:
+    matrix:
+      - PYTHON_VERSION: ["3.13", "3.14", "3.15"]
+  variables:
+    UV_PYTHON: $PYTHON_VERSION
+  script:
+    - cd python
+    - uv run --no-sync ruff check .
+    - uv run --no-sync ruff format --check .
+    - uv run --no-sync pytest tests
+
+docs:
+  extends: .uv
+  stage: test
+  script:
+    - uv run --no-sync --project python mkdocs build --strict --site-dir test
+  artifacts:
+    paths: [test]
+
+pages:
+  extends: .uv
+  stage: deploy
+  script:
+    - uv run --no-sync --project python mkdocs build --strict --site-dir public
+  artifacts:
+    paths: [public]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+### Frontend (React) ###
+
+.bun:
+  image: oven/bun:1.4-debian
+  stage: test
+  before_script:
+    - cd frontend
+    - bun install
+
+frontend-check:
+  extends: .bun
+  script:
+    - bun run test:lint
+    - bun run test:format # test:lint skips formatting
+    - bun run test:types
+    - bun run build
+
+frontend-unit:
+  extends: .bun
+  script:
+    - bun run test:unit
+
+frontend-e2e:
+  extends: .bun
+  script:
+    - bunx playwright install --with-deps chromium
+    - bun run test:e2e # builds the app first, see playwright.config.ts
+  artifacts:
+    when: on_failure
+    paths: [frontend/test-results]

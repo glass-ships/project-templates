@@ -16,6 +16,16 @@ And contains:
 - A sample `App` component to demonstrate how to use React with TypeScript.
 - Several custom hooks, utilities, and UI components to help you build your application.
 
+## Reference files
+
+These are starter kits and references. Nothing imports them, so they don't end up in the build. Use what you need and delete the rest.
+
+- `src/global/colors.scss`: ORNL brand colors and a few other palettes, as SCSS variables. The colors the app uses live in `src/global/_variables.scss`.
+- `src/global/colors_tailwind.scss`: the Tailwind color palette, as SCSS variables.
+- `src/css-examples/`: standalone CSS examples, such as `circular-animation.css`.
+- `src/assets/fonts/`: the Geist and Geist Mono variable fonts.
+- `src/assets/icons/ornl/`: ORNL science-area icons (PNG).
+
 ## Dependencies
 
 - [bun](https://bun.sh/)

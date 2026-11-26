@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.9/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -28,7 +28,15 @@
       "react": "recommended"
     },
     "rules": {
-      "recommended": true
+      "preset": "recommended",
+      "style": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": { "lodash": "Import the function's own file (lodash/debounce): the main file bundles all of lodash." }
+          }
+        }
+      }
     }
   },
   "html": { "formatter": { "selfCloseVoidElements": "always" } },

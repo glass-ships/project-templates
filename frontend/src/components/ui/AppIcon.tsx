@@ -26,7 +26,14 @@ const FallbackSvg = (props: Omit<AppIconProps, "icon">) => {
       <svg className={`${styles.appicon} ${styles[size]} ${props.className}`} viewBox="0 0 24 24" fill="none">
         <title>Unknown Icon</title>
         <circle cx="12" cy="12" r="10" stroke={props.color || "currentColor"} strokeWidth="2" />
-        <text x="50%" y="50%" textAnchor="middle" dominantBaseline="central" fontSize="16" fill={props.color || "currentColor"}>
+        <text
+          x="50%"
+          y="50%"
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize="16"
+          fill={props.color || "currentColor"}
+        >
           ?
         </text>
       </svg>
@@ -66,15 +73,16 @@ function getFontAwesomeIcon(iconName: string) {
 }
 
 export default function AppIcon({
-  id = "",
+  id,
   icon = "",
   size = "small",
   color,
   className = "",
   background = false,
 }: AppIconProps) {
-  
-  const computedClassName = [styles.appicon, styles[size], !color && styles.defaultColor, className].filter(Boolean).join(" ");
+  const computedClassName = [styles.appicon, styles[size], !color && styles.defaultColor, className]
+    .filter(Boolean)
+    .join(" ");
 
   // Check if icon is FontAwesome first
   const faIcon = getFontAwesomeIcon(icon);
