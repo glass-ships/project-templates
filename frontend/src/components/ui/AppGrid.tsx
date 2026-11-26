@@ -14,7 +14,7 @@ export default function AppGrid({ cols = 3, children }: AppGridProps) {
   const items = React.Children.toArray(children);
   return (
     <div
-      className={`${styles.gallery} cols-${cols}`}
+      className={`${styles.gallery} ${styles[`cols-${cols}`] ?? ""}`}
       style={
         {
           "--max-cols": cols.toString(),
@@ -23,9 +23,7 @@ export default function AppGrid({ cols = 3, children }: AppGridProps) {
       }
     >
       {items.map((item, index) => (
-        <div key={React.isValidElement(item) && item.key ? item.key : `grid-item-${index}`} className={styles.item}>
-          {item}
-        </div>
+        <div key={React.isValidElement(item) && item.key ? item.key : `grid-item-${index}`}>{item}</div>
       ))}
     </div>
   );

@@ -5,16 +5,16 @@ Author: glass-ships
 Last updated: 2019
 """
 
+import logging
 import os
 import sys
 
 import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor
-# from memory_profiler import profile
 
-from python_project.utils.logging import get_logger
+from python_project.utils.logging import setup_logging
 
-logger = get_logger("nbtest", verbose=True)
+logger = logging.getLogger("nbtest")
 
 
 # @profile
@@ -29,7 +29,7 @@ def run_notebook(notebook: str) -> tuple[nbformat.NotebookNode, list]:
     proc.allow_errors = True
 
     proc.preprocess(nb, {"metadata": {"path": "/"}})
-    output_path = os.path.join(dirname, "{}_test.ipynb".format(nb_name))
+    output_path = os.path.join(dirname, f"{nb_name}_test.ipynb")
     with open(output_path, mode="wt") as f:
         nbformat.write(nb, f)
 
@@ -61,7 +61,7 @@ def collect_notebooks(path: str) -> list[str]:
             if file.endswith(".ipynb"):
                 notebooks.append(os.path.join(fp, file))
         if len(notebooks) == 0:
-            raise SystemExit("Could not find notebooks in directory: '", sys.argv[1], "'")
+            raise SystemExit(f"Could not find notebooks in directory: '{sys.argv[1]}'")
     else:
         raise SystemExit(
             "Invalid argument: ",
@@ -72,6 +72,7 @@ def collect_notebooks(path: str) -> list[str]:
 
 
 if __name__ == "__main__":
+    setup_logging(level="DEBUG", rotate=False)
     if len(sys.argv) == 1:
         raise SystemExit(
             "Please provide a notebook or directory of notebooks to test.\n"
@@ -82,6 +83,6 @@ if __name__ == "__main__":
     for notebook in notebooks:
         nb, errors = run_notebook(notebook)
         if errors:
-            raise SystemExit("Notebook execution failed. Errors: {}".format(errors))
+            raise SystemExit(f"Notebook execution failed. Errors: {errors}")
         elif not errors:
             print("Notebook execution successful.")

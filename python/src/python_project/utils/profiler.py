@@ -1,13 +1,12 @@
 import cProfile
 import pstats
 from functools import wraps
-from typing import Optional
 
 
 def profile(
-    output_file: Optional[str] = None,
+    output_file: str | None = None,
     sort_by="cumulative",
-    lines_to_print: Optional[int] = None,
+    lines_to_print: int | None = None,
     strip_dirs: bool = False,
 ):
     """A time profiler decorator.

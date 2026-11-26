@@ -44,12 +44,11 @@ export const screenToSvgCoords = (svg: SVGSVGElement, x: number, y: number) => {
   return point;
 };
 
-const canvas = document.createElement("canvas");
-const ctx = canvas?.getContext("2d");
+const ctx = safeDocument()?.createElement("canvas").getContext("2d");
 
 /** calculate dimensions of given font */
 export const getTextSize = (text: string, font: string) => {
-  if (!ctx) return new TextMetrics();
+  if (!ctx) return { width: 0 } as TextMetrics;
   ctx.font = font;
   return ctx.measureText(text);
 };

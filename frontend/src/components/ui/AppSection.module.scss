@@ -6,9 +6,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  justify-items: center;
   text-align: center;
-  scroll-snap-type: y mandatory;
   // background-color: v.$bg-dark;
   &:last-of-type { flex-grow: 1; }
   

@@ -1,0 +1,6 @@
+/** The global `code` and `*` rules set a muted color, a max width and the sans font; inherit the <pre>'s instead. */
+.codeblock code {
+  font: inherit;
+  color: inherit;
+  max-width: none;
+}

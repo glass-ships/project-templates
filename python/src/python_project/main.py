@@ -1,19 +1,16 @@
 import logging
-import os
 import sys
+from pathlib import Path
 
 import typer
 
-from python_project.exceptions import CustomException, _BaseException
-from python_project.utils.logging_alt import setup_logging
-
-# from python_project.utils.logging import get_logger
-
+from python_project.exceptions import CustomException
+from python_project.utils.logging import setup_logging
 
 app = typer.Typer()
-setup_logging(level="DEBUG")
+setup_logging(level="DEBUG", rotate=False)
 logger = logging.getLogger(__name__)
-# logger = get_logger("main", level="DEBUG")
+
 
 class CustomHelpTyper(typer.Typer):
     def get_help_option_names(self) -> tuple[str, ...]:
@@ -27,24 +24,6 @@ def callback(version: bool | None = typer.Option(None, "--version", is_eager=Tru
 
         typer.echo(f"python_project {__version__}")
         raise typer.Exit()
-
-
-@app.command("logger")
-def logger_command():
-    logger.debug("This is a debug message.")
-    logger.info("This is an info message.")
-    logger.warning("This is a warning message.")
-    logger.error("This is an error message.")
-    logger.critical("This is a critical message.")
-
-@app.command("log_exception")
-def log_exception():
-    try:
-        int("a")
-    except _BaseException:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        logger.error(f"Oh no! Something went wrong:\n\t[{fname}:{exc_tb.tb_lineno}] {exc_type.__name__}: {exc_obj}")
 
 
 @app.command("custom_exception")
@@ -64,3 +43,34 @@ def deprecated():
         return "This is the old function."
 
     typer.echo(old_function())
+
+
+@app.command("logger")
+def logger_command():
+    logger.debug("This is a debug message.")
+    logger.info("This is an info message.")
+    logger.warning("This is a warning message.")
+    logger.error("This is an error message.")
+    logger.critical("This is a critical message.")
+
+
+@app.command("log_exception")
+def log_exception():
+    try:
+        int("a")
+    except ValueError:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = Path(exc_tb.tb_frame.f_code.co_filename).name
+        logger.error(f"Oh no! Something went wrong:\n\t[{fname}:{exc_tb.tb_lineno}] {exc_type.__name__}: {exc_obj}")
+
+
+@app.command("loguru")
+def loguru_command():
+    from python_project.utils.logging_loguru import setup_logging as setup_loguru
+
+    setup_loguru(level="DEBUG", rotate=False)
+    logger.debug("This is a debug message.")
+    logger.info("This is an info message.")
+    logger.warning("This is a warning message.")
+    logger.error("This is an error message.")
+    logger.critical("This is a critical message.")

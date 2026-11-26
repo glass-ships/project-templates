@@ -2,9 +2,10 @@
 export const isAbsolute = (url = ""): boolean =>
   ["http:", "https:", "ftp:", "mailto:"].some((prefix) => url.startsWith(prefix));
 
-/** is url outside of monarch domain */
+/** is url outside of glass-ships domain */
 export const isExternal = (url = ""): boolean =>
-  isAbsolute(url) && !getUrl(url, "hostname").endsWith("monarchinitiative.org");
+  // isAbsolute(url) && !getUrl(url, "hostname").endsWith("glass-ships.com");
+  isAbsolute(url) && getUrl(url, "hostname") !== window.location.hostname;
 
 /** Safely get part of url */
 export const getUrl = (url: string, part: KeysMatching<URL, string>): string => {
