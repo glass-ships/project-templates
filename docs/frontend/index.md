@@ -105,6 +105,14 @@ Some files are references that nothing imports, so they don't end up in the buil
 
 - **Your own SVGs**: put `name.svg` in `src/assets/icons/` and use `icon="name"`. For the `color` prop to work, the SVG's paths need `fill="currentColor"` (or `stroke`).
 
+## React runtime
+
+The build ships [TanStack Redact](https://tanstack.com/redact/latest) instead of React: a smaller runtime with the same API. The `redact()` plugin in `vite.config.ts` swaps it in for `react` and `react-dom`, so the code still imports from `"react"`, and the JavaScript the browser downloads is about a third smaller.
+
+- Redact renders synchronously, without React's time slicing, so a very large re-render can make typing feel slow. Its [compatibility notes](https://tanstack.com/redact/latest/docs/compatibility) list the other differences.
+- Unit tests run on React, because Testing Library loads `react-dom` in a way the swap doesn't reach. The [end-to-end tests](testing.md#end-to-end-tests) run on the production build, so they test Redact.
+- To go back to React, delete the `redact()` plugin from `vite.config.ts`.
+
 ## Next
 
 - [Theming](theming.md)
