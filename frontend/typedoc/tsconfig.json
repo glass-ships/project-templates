@@ -1,0 +1,5 @@
+{
+  // the frontend's own settings; TypeScript 6 only reads the code here, it doesn't check or build it
+  "extends": "../tsconfig.json",
+  "include": ["../src"]
+}

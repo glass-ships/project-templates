@@ -26,7 +26,15 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["mkdocs", "mkdocs-material", "mkdocstrings[python]", "pytest", "ruff"]
+dev = [
+    # Documentation
+    "zensical",
+    "mkdocstrings[python]",
+    # Development
+    "httpx2", # for FastAPI's TestClient
+    "pytest",
+    "ruff",
+]
 
 [project.scripts]
 my_app = "python_project.main:app"
@@ -57,7 +65,6 @@ packages = ["src/python_project"]
 line-length = 120
 
 [tool.ruff.lint]
-ignore = [
-    "F541", # f-strings with no placeholders
-]
+select = ["A", "ARG", "ASYNC", "BLE", "E", "F", "FURB", "I", "N", "UP", "W"]
+ignore = []
 # exclude = []

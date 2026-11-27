@@ -18,7 +18,7 @@ variables:
     key:
       files: [python/pyproject.toml]
     paths: [.uv-cache]
-  # the dev extra has pytest, ruff and mkdocs (uv.lock is gitignored, so this resolves fresh)
+  # the dev extra has pytest, ruff, Zensical and mkdocstrings (uv.lock is gitignored, so this resolves fresh)
   before_script:
     - uv sync --extra dev --project python
 
@@ -36,19 +36,24 @@ python:
     - uv run --no-sync ruff format --check .
     - uv run --no-sync pytest tests
 
+# the site needs the frontend API reference from frontend-docs; it builds into docs/site/
 docs:
   extends: .uv
   stage: test
+  needs: [frontend-docs]
   script:
-    - uv run --no-sync --project python mkdocs build --strict --site-dir test
+    - uv run --no-sync --project python zensical build --strict -f docs/zensical.toml
   artifacts:
-    paths: [test]
+    paths: [docs/site]
 
+# in the deploy stage, so it only runs once every test passed
 pages:
   extends: .uv
   stage: deploy
+  dependencies: [frontend-docs]
   script:
-    - uv run --no-sync --project python mkdocs build --strict --site-dir public
+    - uv run --no-sync --project python zensical build --strict -f docs/zensical.toml
+    - mv docs/site public
   artifacts:
     paths: [public]
   rules:
@@ -75,6 +80,14 @@ frontend-unit:
   extends: .bun
   script:
     - bun run test:unit
+
+# the frontend API reference for the docs jobs (docs/frontend/api/ is gitignored)
+frontend-docs:
+  extends: .bun
+  script:
+    - bun run docs
+  artifacts:
+    paths: [docs/frontend/api]
 
 frontend-e2e:
   extends: .bun

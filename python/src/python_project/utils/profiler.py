@@ -1,34 +1,44 @@
 import cProfile
 import pstats
+from collections.abc import Callable
 from functools import wraps
 
 
 def profile(
     output_file: str | None = None,
-    sort_by="cumulative",
+    sort_by: str | pstats.SortKey | list[str | pstats.SortKey] | tuple[str | pstats.SortKey, ...] = "cumulative",
     lines_to_print: int | None = None,
     strip_dirs: bool = False,
-):
-    """A time profiler decorator.
-    Inspired by and modified the profile decorator of Giampaolo Rodola:
+) -> Callable[[Callable], Callable]:
+    """Decorator that profiles each call of a function with cProfile and writes the stats to a file.
+
+    Based on the profile decorator by Giampaolo Rodola:
     http://code.activestate.com/recipes/577817-profile-decorator/
-    Args:
-        output_file: str or None. Default is None
-            If None, the name of the decorated function is used.
-        sort_by: str, SortKey enum, tuple/list of str/SortKey enum
-            Sorting criteria for the Stats object.
-            For a list of valid string and SortKey refer to:
-            https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats
-        lines_to_print: int or None
-            Number of lines to print. Default (None) is for all the lines.
-            This is useful in reducing the size of the printout, especially
-            that sorting by 'cumulative', the time consuming operations
-            are printed toward the top of the file.
-        strip_dirs: bool
-            Whether to remove the leading path info from file names.
-            This is also useful in reducing the size of the printout
-    Returns:
-        Profile of the decorated function
+
+    Parameters
+    ----------
+    output_file : str | None
+        File to write the stats to. Defaults to `<function name>.prof`.
+    sort_by : str | pstats.SortKey | list | tuple
+        How to sort the stats: a string or `pstats.SortKey`, or a list of them. See
+        https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats
+    lines_to_print : int | None
+        Number of lines to print, or None for all of them. Sorted by "cumulative",
+        the slowest calls come first, so a small number keeps just those.
+    strip_dirs : bool
+        Whether to remove the leading path from file names, to shorten the output.
+
+    Returns
+    -------
+    Callable
+        The decorator. The decorated function returns what the original returns.
+
+    Examples
+    --------
+    ```python
+    @profile(lines_to_print=20)
+    def slow_function(): ...
+    ```
     """
 
     def inner(func):

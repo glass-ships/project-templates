@@ -1,0 +1,13 @@
+{
+  "name": "frontend-typedoc",
+  "private": true,
+  "description": "Generates the frontend API reference. Separate from the frontend because TypeDoc doesn't support TypeScript 7 yet; once it does, move these into frontend/package.json and delete this folder.",
+  "scripts": {
+    "docs": "bun --bun typedoc"
+  },
+  "devDependencies": {
+    "typedoc": "0.28.20",
+    "typedoc-plugin-markdown": "4.14.1",
+    "typescript": "6.0.3"
+  }
+}

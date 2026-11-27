@@ -2,9 +2,9 @@
 
 import logging
 
-from fastapi import Request
+from fastapi import Request, Response
 from fastapi.logger import logger as fastapi_logger
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 
 fastapi_logger.setLevel(logging.INFO)
 
@@ -12,14 +12,22 @@ fastapi_logger.setLevel(logging.INFO)
 class LoggingMiddleware(BaseHTTPMiddleware):
     """Middleware to log requests."""
 
-    async def dispatch(self, request: Request, call_next):
-        """
-        Log requests.
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        """Log a request, then pass it on.
 
-        :param request: The request.
-        :param call_next: The next call.
-        :param logger: The logger.
-        :return: The response.
+        Logging is commented out in the body: uncomment what you need.
+
+        Parameters
+        ----------
+        request : Request
+            The incoming request.
+        call_next : RequestResponseEndpoint
+            Passes the request to the next middleware or the route.
+
+        Returns
+        -------
+        Response
+            The response.
         """
         # Log request method and URL
         # logger.info(f"Request URL: {request.url} | Method: {request.method}")

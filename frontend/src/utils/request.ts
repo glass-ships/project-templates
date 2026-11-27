@@ -3,10 +3,11 @@
 export const api = "";
 export const prefix = "/api";
 
-/** --------------------------------------------------------------
- * Simple Typescript function to make GET requests to the backend
- * From: https://github.com/blekhmanlab/compendium_website
-------------------------------------------------------------------*/
+/**
+ * Makes a GET request to `url` and returns the response, parsed as JSON or as text.
+ *
+ * Adapted from https://github.com/blekhmanlab/compendium_website
+ */
 export const requestSimple = async <Type>(url: string, parseAs: string = "json") => {
   const options: RequestInit = { redirect: "follow" };
   const response = await fetch(url, options);
@@ -17,16 +18,17 @@ export const requestSimple = async <Type>(url: string, parseAs: string = "json")
 /* --------------------------------------------------------------------------------- */
 
 /** Type for URL parameters */
-type Param = string | number | boolean | undefined | null;
+export type Param = string | number | boolean | undefined | null;
 export type Params = { [key: string]: Param | Param[] };
 
 /** In-memory cache for GET requests */
 const cache = new Map<string, Response>();
 
-/** ------------------------------------------------------------------------------
- * More complex Typescript function to make GET and POST requests to the backend
- * From: https://github.com/monarch-initiative/monarch-app/
- ------------------------------------------------------------------------------*/
+/**
+ * Makes a GET or POST request to the backend at `path`, and returns the response, parsed as JSON or as text.
+ *
+ * Adapted from https://github.com/monarch-initiative/monarch-app/
+ */
 export const request = async <Response>(
   /** API endpoint, appended to api+prefix */
   path = "",

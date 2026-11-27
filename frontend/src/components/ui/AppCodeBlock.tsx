@@ -1,5 +1,3 @@
-// Block of preformatted code that keyboard users can focus and scroll
-
 import { dedent } from "@/utils/string";
 import styles from "./AppCodeBlock.module.scss";
 
@@ -12,6 +10,20 @@ export type AppCodeBlockProps = {
   id?: string;
 };
 
+/**
+ * A block of preformatted code. Long lines scroll sideways, and keyboard users can focus the block to scroll it.
+ *
+ * @example
+ * ```tsx
+ * <AppCodeBlock language="js">
+ *   {`
+ *     function example() {
+ *       return true;
+ *     }
+ *   `}
+ * </AppCodeBlock>
+ * ```
+ */
 export default function AppCodeBlock({ children, language, className = "", id }: AppCodeBlockProps) {
   return (
     // biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable regions must be keyboard-focusable so keyboard users can scroll them (axe scrollable-region-focusable)

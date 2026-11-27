@@ -22,17 +22,27 @@ jobs:
           enable-cache: true
           cache-dependency-glob: python/pyproject.toml
 
-      # mkdocs is in the python project's dev extra; mkdocs.yaml is at the repo root
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+
+      # writes docs/frontend/api/, which is gitignored
+      - name: Generate the frontend API reference
+        working-directory: ./frontend
+        run: |
+          bun install
+          bun run docs
+
+      # Zensical and mkdocstrings are in the python project's dev extra
       - name: Install packages
         run: uv sync --extra dev --project python
 
       - name: Build documentation
-        run: uv run --no-sync --project python mkdocs build --strict
+        run: uv run --no-sync --project python zensical build --strict -f docs/zensical.toml
 
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4.9.0
         if: github.ref == 'refs/heads/main'
         with:
-          folder: site
+          folder: docs/site
           target-folder: docs
           clean: true

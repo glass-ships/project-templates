@@ -3,6 +3,9 @@ import shutil
 import subprocess
 from pathlib import Path
 
+# python/scripts/build_frontend.py -> the repo root -> frontend/
+FRONTEND_DIR = Path(__file__).resolve().parents[2] / "frontend"
+
 
 def build_frontend(cleanup=False):
     if shutil.which("bun"):
@@ -12,11 +15,9 @@ def build_frontend(cleanup=False):
     else:
         raise RuntimeError("npm/bun is not installed. Please install either npm or bun.")
 
-    client_folder = (Path(__file__).parent.parent / "frontend").resolve()
+    os.chdir(FRONTEND_DIR)
 
-    os.chdir(client_folder)
-
-    node_modules = client_folder / "node_modules"
+    node_modules = FRONTEND_DIR / "node_modules"
     if not node_modules.exists():
         print("Installing node modules...")
         subprocess.run([tool, "install"], check=True)

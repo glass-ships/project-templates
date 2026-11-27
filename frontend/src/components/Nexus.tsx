@@ -242,6 +242,11 @@ function step() {
   draw();
 }
 
+/**
+ * A background of dots joined by lines, on a canvas fixed behind the page. It tilts toward the
+ * pointer, and pulses with color every 5 seconds and on click. It doesn't move when the user prefers
+ * reduced motion.
+ */
 export default function Nexus() {
   const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
 

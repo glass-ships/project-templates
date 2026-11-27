@@ -9,10 +9,14 @@ import styles from "./AppIcon.module.scss";
 
 export type AppIconProps = {
   id?: string;
+  /** A FontAwesome icon registered in `src/global/icons.ts`, or the file name (without `.svg`) of an icon in `src/assets/icons/`. */
   icon: string;
+  /** 1, 1.5, 2 or 3em square. Defaults to `"small"`. */
   size?: "tiny" | "small" | "medium" | "large";
+  /** Any CSS color. Defaults to the text color (`$text`). */
   color?: string;
   className?: string;
+  /** Puts the icon on a padded background. */
   background?: boolean;
 };
 
@@ -72,6 +76,16 @@ function getFontAwesomeIcon(iconName: string) {
   return null;
 }
 
+/**
+ * An icon, by name. FontAwesome icons are looked up first, then custom SVGs in `src/assets/icons/`,
+ * which load on first use. An unknown name shows a "?" placeholder.
+ *
+ * @example
+ * ```tsx
+ * <AppIcon icon="github" />
+ * <AppIcon icon="logo" size="large" background />
+ * ```
+ */
 export default function AppIcon({
   id,
   icon = "",

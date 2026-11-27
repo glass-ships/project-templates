@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 
-type InfiniteScrollProps = {
+export type AppInfiniteScrollProps = {
   children: React.ReactNode;
+  /** Whether there are more pages. Loading stops when it's false. */
   hasNextPage: boolean;
   /**
    * Called when the end of the list is within `threshold` px of the viewport, and again after each
@@ -10,16 +11,27 @@ type InfiniteScrollProps = {
   onLoadMore: () => void;
   /** Set while a page is loading, so a re-render during the load doesn't request the same page again. */
   loading?: boolean;
+  /** How close, in px, the end of the list must get to the bottom of the viewport before loading starts. Defaults to 100. */
   threshold?: number;
 };
 
-export default function InfiniteScroll({
+/**
+ * Renders its children, and calls `onLoadMore` when the end of them scrolls near the viewport.
+ *
+ * @example
+ * ```tsx
+ * <AppInfiniteScroll hasNextPage={page < lastPage} loading={loading} onLoadMore={() => loadPage(page + 1)}>
+ *   {items.map((item) => <Row key={item.id} item={item} />)}
+ * </AppInfiniteScroll>
+ * ```
+ */
+export default function AppInfiniteScroll({
   children,
   hasNextPage,
   onLoadMore,
   loading = false,
   threshold = 100,
-}: InfiniteScrollProps) {
+}: AppInfiniteScrollProps) {
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   // Runs after every render with a new observer, because an observer's first report is where the

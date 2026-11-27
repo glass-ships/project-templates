@@ -1,19 +1,19 @@
 """Custom exceptions for PROJECT_NAME"""
 
 
-class _BaseException(Exception):
-    """Base class for PROJECT_NAME exceptions"""
+class BaseError(Exception):
+    """Base exception class for PROJECT_NAME exceptions"""
 
 
-class CustomException(_BaseException):
+class CustomError(BaseError):
     """Generic custom exception class
 
     Usage:
     ```
     try:
-        raise CustomException('Something bad happened', custom_kwarg='value')
-    except CustomException as exc:
-        print(f'Сaught CustomException exception with custom_kwarg={exc.custom_kwarg}')
+        raise CustomError('Something bad happened', custom_kwarg='value')
+    except CustomError as exc:
+        print(f'Сaught CustomError exception with custom_kwarg={exc.custom_kwarg}')
     ```
     """
 
@@ -22,7 +22,7 @@ class CustomException(_BaseException):
         self.custom_kwarg = kwargs.get("custom_kwarg")
 
 
-class AnotherCustomException(CustomException):
+class AnotherCustomError(CustomError):
     """Another custom exception class"""
 
     def __init__(self, *args, **kwargs):

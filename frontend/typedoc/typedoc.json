@@ -1,0 +1,36 @@
+{
+  "$schema": "https://typedoc-plugin-markdown.org/schema.json",
+  "name": "Frontend API",
+  "tsconfig": "./tsconfig.json",
+  "entryPoints": [
+    "../src/components/ui/*.tsx",
+    "../src/components/ui/LinkContext.ts",
+    "../src/components/Nexus.tsx",
+    "../src/components/RouterLink.tsx",
+    "../src/hooks/*.ts",
+    "../src/utils/*.ts"
+  ],
+  "out": "../../docs/frontend/api",
+  "cleanOutputDir": true,
+  "plugin": ["typedoc-plugin-markdown", "./plugin.mjs"],
+  "readme": "none",
+  "excludePrivate": true,
+  "treatWarningsAsErrors": true,
+  // no "Defined in" links: they repeat under every prop and point at one commit's hash
+  "disableSources": true,
+  // the component or function first, then its props types
+  "groupOrder": ["Functions", "Variables", "*"],
+
+  // typedoc-plugin-markdown: one page per file, named index.md so Zensical uses it as the section page
+  "outputFileStrategy": "modules",
+  "entryFileName": "index.md",
+  "hidePageHeader": true,
+  "hideBreadcrumbs": true,
+  // no "Functions" / "Interfaces" headings: each page is one file, its title already says what it is
+  "hideGroupHeadings": true,
+  "useCodeBlocks": true,
+  "parametersFormat": "table",
+  "interfacePropertiesFormat": "table",
+  "typeAliasPropertiesFormat": "table",
+  "typeDeclarationFormat": "table"
+}

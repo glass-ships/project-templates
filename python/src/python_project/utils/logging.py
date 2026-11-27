@@ -69,23 +69,24 @@ def setup_logging(
 ):
     """Configure logging with a custom format and optional timed rotating file handler.
 
-    Arguments
-    ---------
-    level: str
-        The logging level to set for the root logger. Options are "DEBUG", "INFO", "WARNING", "ERROR", and "CRITICAL".
-    rotate: bool
-        If True, add a TimedRotatingFileHandler that rotates logs at midnight and keeps N backups.
-    num_backups: int
-        The number of backup files to keep. Default is 15. Only relevant if `rotate` is True.
-    log_file: str | Path | None
-        Path of the rotating log file (default: ~/PROJECT_NAME.log). Missing parent directories are created.
-        Only relevant if `rotate` is True.
-    reset_handlers: bool
+    Parameters
+    ----------
+    level : {"INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL"}
+        The level for the root logger.
+    rotate : bool
+        If True, add a TimedRotatingFileHandler that rotates logs at midnight and keeps
+        `num_backups` old files.
+    num_backups : int
+        The number of old log files to keep. Only used if `rotate` is True.
+    log_file : str | Path | None
+        Path of the rotating log file (default: ~/PROJECT_NAME.log). Missing parent
+        directories are created. Only used if `rotate` is True.
+    reset_handlers : bool
         If True, remove existing handlers from the root logger before adding new ones.
-        This prevents duplicate logs if setup_logging is called multiple times.
-    logger_levels: Mapping[str, str | int] | None
+        This prevents duplicate logs if setup_logging is called more than once.
+    logger_levels : Mapping[str, str | int] | None
         Per-logger level overrides, e.g. {"discord": "WARNING", "my_package": "DEBUG"}.
-        These may be more or less verbose than `level`, since handlers do not filter by level.
+        These may be more or less verbose than `level`, since handlers don't filter by level.
     """
     root = logging.getLogger()
     root.setLevel(level)
@@ -130,12 +131,12 @@ def setup_logging(
 def add_log_fh(log_file: str | Path, mode: Literal["w", "a"] = "w") -> logging.FileHandler:
     """Add a file handler to the root logger, replacing any existing one for the same file.
 
-    Arguments
-    ---------
-    log_file: str | Path
+    Parameters
+    ----------
+    log_file : str | Path
         Path to the log file. Missing parent directories are created.
-    mode: "w" | "a"
-        FileHandler mode: "w" to overwrite (default) or "a" to append.
+    mode : {"w", "a"}
+        "w" to overwrite the file (default) or "a" to append to it.
 
     Returns
     -------
@@ -159,7 +160,15 @@ def add_log_fh(log_file: str | Path, mode: Literal["w", "a"] = "w") -> logging.F
 def remove_log_fh(log_file: str | Path) -> int:
     """Close and remove root logger file handlers that write to the given log_file.
 
-    Returns the number of handlers removed.
+    Parameters
+    ----------
+    log_file : str | Path
+        Path to the log file.
+
+    Returns
+    -------
+    int
+        The number of handlers removed.
     """
 
     resolved_log_file = Path(log_file).resolve()
@@ -182,7 +191,19 @@ def remove_log_fh(log_file: str | Path) -> int:
 def log_to_file(log_file: str | Path, mode: Literal["w", "a"] = "w") -> Iterator[logging.FileHandler]:
     """Context manager to temporarily add a file handler to the root logger.
 
-    Yields the handler. It is removed when the context exits, even if an exception occurs.
+    The handler is removed when the context exits, even if an exception occurs.
+
+    Parameters
+    ----------
+    log_file : str | Path
+        Path to the log file. Missing parent directories are created.
+    mode : {"w", "a"}
+        "w" to overwrite the file (default) or "a" to append to it.
+
+    Yields
+    ------
+    logging.FileHandler
+        The handler that was added.
     """
 
     handler = add_log_fh(log_file, mode=mode)

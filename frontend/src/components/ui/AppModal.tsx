@@ -3,16 +3,36 @@ import { useCallback, useEffect, useRef } from "react";
 
 import styles from "./AppModal.module.scss";
 
-type ModalProps = {
+export type ModalProps = {
   children?: ReactNode;
+  /** Whether the modal is shown. */
   isOpen: boolean;
   /**
    * Called on Escape or a backdrop click. The parent closes the modal by setting isOpen to false.
    * Pass `() => {}` for a modal that only the parent can close.
    */
   toggle: () => void;
+  /** Called on every key press while the modal is open. */
   onKeyDown?: (e: KeyboardEvent | React.KeyboardEvent<HTMLDivElement>) => void;
 };
+
+/**
+ * A modal dialog over a dimmed backdrop. While it's open, the page behind it doesn't scroll, and
+ * keyboard focus stays inside it. On close, focus returns to whatever opened it.
+ *
+ * The parent owns whether it's open: Escape and backdrop clicks call `toggle`, and the modal only
+ * closes when the parent sets `isOpen` to false.
+ *
+ * @example
+ * ```tsx
+ * const [isOpen, setIsOpen] = useState(false);
+ *
+ * <AppButton text="Open" onClick={() => setIsOpen(true)} />
+ * <AppModal isOpen={isOpen} toggle={() => setIsOpen(false)}>
+ *   <h2>Title</h2>
+ * </AppModal>
+ * ```
+ */
 
 export default function AppModal(props: ModalProps) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
