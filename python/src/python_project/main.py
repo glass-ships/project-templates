@@ -4,7 +4,7 @@ from pathlib import Path
 
 import typer
 
-from python_project.exceptions import CustomException
+from python_project.exceptions import CustomError
 from python_project.utils.logging import setup_logging
 
 app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
@@ -24,9 +24,9 @@ def callback(version: bool | None = typer.Option(None, "--version", is_eager=Tru
 @app.command("custom_exception")
 def custom_exception():
     try:
-        raise CustomException("Something bad happened", custom_kwarg="some_value")
-    except CustomException as exc:
-        logger.error(f"Caught CustomException with custom_kwarg={exc.custom_kwarg}")
+        raise CustomError("Something bad happened", custom_kwarg="some_value")
+    except CustomError as exc:
+        logger.error(f"Caught CustomError with custom_kwarg={exc.custom_kwarg}")
 
 
 @app.command("deprecated")

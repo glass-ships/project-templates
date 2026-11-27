@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app):
+async def lifespan(app):  # noqa: ARG001
     logger.info("Performing system startup tasks.")
     yield
     logger.info("Server shutting down.")

@@ -30,7 +30,7 @@ def run_notebook(notebook: str) -> tuple[nbformat.NotebookNode, list]:
 
     proc.preprocess(nb, {"metadata": {"path": "/"}})
     output_path = os.path.join(dirname, f"{nb_name}_test.ipynb")
-    with open(output_path, mode="wt") as f:
+    with open(output_path, mode="w") as f:
         nbformat.write(nb, f)
 
     errors = []
@@ -45,14 +45,9 @@ def run_notebook(notebook: str) -> tuple[nbformat.NotebookNode, list]:
     return nb, errors
 
 
-def collect_notebooks(path: str) -> list[str]:
+def collect_notebooks(path: str) -> list[str]:  # noqa: ARG001
     """Collect all notebooks in a directory"""
     notebooks = []
-    # for root, _, files in os.walk(path):
-    #     for file in files:
-    #         if file.endswith(".ipynb"):
-    #             notebooks.append(os.path.join(root, file))
-    # return notebooks
     fp = os.path.abspath(sys.argv[1])
     if os.path.isfile(fp) and fp.endswith(".ipynb"):
         notebooks.append(fp)
